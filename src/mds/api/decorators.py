@@ -26,7 +26,7 @@ def enable_logging(f):
         request = args[0]
         setattr(request, LOGGING_ENABLED, True)
         return f(*args, **kwargs)
-    new_f.func_name = f.func_name
+    new_f.__name__ = f.__name__
     return new_f
 
 CRUD_MAP = dictzip(CRUD,crud)
@@ -41,7 +41,7 @@ def _signal(klazz, name, f):
             signal.connect(callback)
         setattr(request, name, signal)
         return f(*args, **kwargs)
-    new_f.func_name = f.func_name
+    new_f.__name__ = f.__name__
     return new_f
 
 def logged(klazz):
@@ -110,7 +110,7 @@ def validate(operation='POST'):
             # try to create one on the fly
             v_form = modelform_factory(model=getattr(klass, 'model'))
         else:
-            return error(u'Invalid object')
+            return error('Invalid object')
         # Create the dispatchable form and validate
         logging.info("%s" % operation)
         if operation == 'POST' or operation == "PUT":
@@ -126,12 +126,12 @@ def validate(operation='POST'):
             try:
                 form.full_clean()
             except:
-                errs = form.errors.keys()
+                errs = list(form.errors.keys())
                 return fail(None, errors=errs)
                 
             if not form.is_valid():
                 logging.error("Form invalid")
-                errs = form.errors.keys();
+                errs = list(form.errors.keys());
                 return fail(None, errors=errs)
             else:
                 logging.debug("FORM VALID")

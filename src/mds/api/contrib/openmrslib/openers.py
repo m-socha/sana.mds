@@ -3,9 +3,9 @@
 :author: Sana Development Team
 :version: 2.0
 '''
-import urllib
-import cookielib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import http.cookiejar
+import urllib.request, urllib.error, urllib.parse
 import cjson
 import re  
 import base64
@@ -45,15 +45,15 @@ class OpenMRSOpener(AbstractHandler):
         """Builds, installs and returns an http opener using urllib2 and 
             including a MultiPartPostHandler from the contrib package.S
         """
-        cookies = cookielib.CookieJar()
-        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        cookies = http.cookiejar.CookieJar()
+        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, url, username, password)
-        auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib2.build_opener(
+        auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib.request.build_opener(
                 auth_handler,
-                urllib2.HTTPCookieProcessor(cookies),
+                urllib.request.HTTPCookieProcessor(cookies),
                 handlers.MultipartPostHandler)
-        urllib2.install_opener(opener)
+        urllib.request.install_opener(opener)
         return opener
     
     def build_path(self,wsname,**kwargs):
@@ -79,18 +79,18 @@ class OpenMRSOpener(AbstractHandler):
         rep = query.get('v ', None)
         if not rep:
             query['v'] = 'full'
-        qstring = urllib.urlencode(query)
+        qstring = urllib.parse.urlencode(query)
         url = '{0}{1}?{2}'.format(self.host, path, qstring)
         return url
         
     def open(self, url, username=None, password=None, data=None):
         """ Opens a web service url resource """
         opener, session_key = self.open_session(username, password)
-        req = urllib2.Request(url)
+        req = urllib.request.Request(url)
         if session_key:
             req.add_header("jsessionid", session_key)
         if data:
-            postdata = urllib.urlencode(data)
+            postdata = urllib.parse.urlencode(data)
             req.add_data(postdata)
         return opener.open(req)
     
@@ -106,20 +106,20 @@ class OpenMRSOpener(AbstractHandler):
             return None, None
         
         # if not given for the ws or the class has no default
-        spath = skeys.get(wsname, None) if wsname in skeys.keys() else skeys.get("default", None)
+        spath = skeys.get(wsname, None) if wsname in list(skeys.keys()) else skeys.get("default", None)
         if not spath:
             return None
         
         # assuming we have data build up the session opener
         url = self.build_url(wsname)
-        cookies = cookielib.CookieJar()
-        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        cookies = http.cookiejar.CookieJar()
+        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, url, username, password)
-        auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib2.build_opener(auth_handler,
-                urllib2.HTTPCookieProcessor(cookies),)
-        urllib2.install_opener(opener)
-        req = urllib2.Request(url)
+        auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib.request.build_opener(auth_handler,
+                urllib.request.HTTPCookieProcessor(cookies),)
+        urllib.request.install_opener(opener)
+        req = urllib.request.Request(url)
         
         #todo make this support something other than basic auth
         basic64 = lambda x,y: base64.encodestring('%s:%s' % (x, y))[:-1]

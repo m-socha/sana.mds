@@ -100,7 +100,7 @@ class SessionHandler(DispatchingHandler):
                     return fail(msg)
         except Exception as e:
             msg = "Internal Server Error"
-            logging.error(unicode(e))
+            logging.error(str(e))
             logtb()
             return error(msg)
         
@@ -283,7 +283,7 @@ class CompoundFormHandler(object):
     
     def create(request, *args, **kwargs):
         cleaned = {}
-        for k,v in getattr(self.__class__, "forms", {}).items():
+        for k,v in list(getattr(self.__class__, "forms", {}).items()):
             form = v(request.ITEMS[k])
             form.full_clean()
             cleaned[k] = form

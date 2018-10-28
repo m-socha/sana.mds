@@ -6,11 +6,11 @@ Created on Aug 11, 2012
 '''
 try:
     import json as simplejson
-except ImportError, e:
+except ImportError as e:
     import simplejson
     
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from django.conf import settings
 
@@ -38,7 +38,7 @@ class KannelOpener:
         try:
             messages = formatter(n) if formatter else n
             for message in messages:
-                params = urllib.urlencode({
+                params = urllib.parse.urlencode({
                         'username': settings.KANNEL_USER,
                         'password': settings.KANNEL_PASSWORD,
                         'to': phoneId,
@@ -47,10 +47,10 @@ class KannelOpener:
     
                 logging.info("Sending kannel notification %s to %s" %
                              (message, phoneId))
-                response = urllib.urlopen(settings.KANNEL_URI % params).read()
+                response = urllib.request.urlopen(settings.KANNEL_URI % params).read()
                 logging.info("Kannel response: %s" % response)
                 result = True
-        except Exception, e:
+        except Exception as e:
             logging.error("Couldn't submit Kannel notification for %s: %s" 
                           % (phoneId, e))
         return result

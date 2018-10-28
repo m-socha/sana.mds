@@ -23,17 +23,17 @@ _CODES = {
 
 class _code:
     def __init__(self, code):
-        if code in _CODES.keys():
+        if code in list(_CODES.keys()):
             self.name = code
         else:
             self.name = 'INTERNAL ERROR'
         self.code = _CODES.get(self.name)
     
     def __repr__(self):
-        return u'{0}'.format(self.code)
+        return '{0}'.format(self.code)
     
     def __unicode__(self):
-        return u'{0}'.format(self.code)
+        return '{0}'.format(self.code)
     
 class Codes:
     ''' Standard Response codes for responses.'''

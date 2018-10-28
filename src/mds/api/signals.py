@@ -89,7 +89,7 @@ class EventSignalHandler(object):
         self.model = model
 
     def __call__(self, sender, **kwargs):
-        print self.__class__.__name__, "__call__"
+        print(self.__class__.__name__, "__call__")
         try:
             data = kwargs.get('event',None)
             if not data:

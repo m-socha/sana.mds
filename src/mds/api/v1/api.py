@@ -3,7 +3,7 @@
 :Authors: Sana Dev Team
 :Version: 1.1
 """
-from __future__ import with_statement
+
 import os, sys, traceback
 import cjson
 import datetime
@@ -112,7 +112,7 @@ def register_saved_procedure(sp_guid, procedure_guid, responses,
     # BINARY_TYPES above
     try:
         responses_dict = cjson.decode(responses,True)
-        for k,v in responses_dict.items():
+        for k,v in list(responses_dict.items()):
             if settings.DEBUG:
                 logging.debug("%s : %s" % (k,v))
             if v['type'] in BINARY_TYPES:
@@ -126,7 +126,7 @@ def register_saved_procedure(sp_guid, procedure_guid, responses,
                                         procedure=sp, element_id=k, guid=item)
                     br.total_size = 0
                     br.content_type = CONTENT_TYPES[v['type']]
-                    if CONVERTED_CONTENT_TYPES.has_key(v['type']):
+                    if v['type'] in CONVERTED_CONTENT_TYPES:
                         br.convert_before_upload = True
                         br.conversion_complete = False
                     br.save()
@@ -141,7 +141,7 @@ def register_saved_procedure(sp_guid, procedure_guid, responses,
                                  % (br.pk, br.data.path))
                     br.save()
                     br = None
-    except Exception,e:
+    except Exception as e:
         logging.error("Error creating BinaryResource stubs: %s" % str(e))
     return maybe_upload_procedure(sp)
 
@@ -225,7 +225,7 @@ def maybe_upload_procedure(saved_procedure):
         del responses['procedureTitle']
         procedure_title = procedure_title_element.get('answer', '')
 
-    for eid,attr in responses.items():
+    for eid,attr in list(responses.items()):
         if enrolled == "Yes":
             if (eid == "patientId"):
                 patient_id = attr.get('answer')
@@ -310,7 +310,7 @@ def maybe_upload_procedure(saved_procedure):
                             patient_gender,
                             patient_birthdate,
                             auth = auth)
-            except Exception, e:
+            except Exception as e:
                 logging
 
         # execute upload

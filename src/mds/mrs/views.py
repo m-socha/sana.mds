@@ -37,7 +37,7 @@ def chunk( seq, size, pad=None ):
     """
     n = len(seq)
     mod = n % size
-    for i in xrange(0, n-mod, size):
+    for i in range(0, n-mod, size):
         yield seq[i:i+size]
     if mod:
         padding = [pad] * (size-mod)
@@ -60,7 +60,7 @@ def list_notifications(request):
                               {'notifications': notifications})
 
 def log_list(request):
-    query = dict(request.GET.items())
+    query = dict(list(request.GET.items()))
     start = int(query.get('start', 1))
     limit = int(query.get('limit', 20))
     objects = RequestLog.objects.all().filter().order_by('-created')
@@ -71,7 +71,7 @@ def log_list(request):
         m = obj.pop('message')
         try:
             obj['message'] = cjson.decode(m,True)
-            print 'decoded'
+            print('decoded')
         except:
             obj['message'] = m
         objs.append(obj)
@@ -79,18 +79,18 @@ def log_list(request):
             'limit': limit,
             'start': start,
             "rate": int(query.get('refresh', 5)),
-            'range': range(1, paginator.num_pages + 1),
+            'range': list(range(1, paginator.num_pages + 1)),
             "version": settings.API_VERSION }
     return render_to_response('logging/list.html', RequestContext(request,data))
 
 def log_detail(request, uuid):
     log = RequestLog.objects.get(uuid=uuid)
     try:
-        print type(log.messages)
+        print(type(log.messages))
         
         for x in log.messages:
             x['message'] = cjson.decode(x)
-            print x['message']
+            print(x['message'])
     except:
         data = log.message
     message = {'id': uuid, 'data': data }

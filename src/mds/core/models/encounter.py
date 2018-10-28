@@ -70,6 +70,6 @@ class Encounter(models.Model):
     	return ( 'core:encounter', { self.uuid : self.uuid } )
 
     def __unicode__(self):
-        return u'{procedure} - {subject}'.format(
+        return '{procedure} - {subject}'.format(
             procedure=self.procedure,
             subject=self.subject)

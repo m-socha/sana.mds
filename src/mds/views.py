@@ -44,7 +44,7 @@ def home(request):
         'code':200,
         'message': { 
             'django': django_version(),
-            'platform': u' '.join(platform.uname()[0:4]),
+            'platform': ' '.join(platform.uname()[0:4]),
             'version': version(),
         },
     }
