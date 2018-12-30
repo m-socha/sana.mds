@@ -6,7 +6,7 @@
 import logging
 from uuid import UUID
 import re
-import cjson as _json
+import ujson as _json
 import shutil, os
 
 from django.contrib.auth.models import User, UserManager

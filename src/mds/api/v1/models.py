@@ -3,7 +3,7 @@
 :Authors: Sana dev team
 :Version: 1.1
 """
-import cjson
+import ujson
 import os
 
 from django.db import models
@@ -227,7 +227,7 @@ class Notification(models.Model):
     delivered = models.BooleanField()
 
     def to_json(self):
-        return cjson.encode({
+        return ujson.dumps({
             'phoneId': self.client,
             'message': self.message,
             'procedureId': self.procedure_id,

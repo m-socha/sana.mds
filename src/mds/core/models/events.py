@@ -4,7 +4,7 @@ Created on Feb 29, 2012
 :Authors: Sana dev team
 :Version: 2.0
 """
-import cjson
+import ujson
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -58,12 +58,12 @@ class Event(models.Model):
     
     def getmessage(self):
         try:
-            return cjson.decode(self.messages)
+            return ujson.loads(self.messages)
         except:
             return self.messages
         
     def setmessage(self, value):
-        self.level = cjson.encode(value, True)
+        self.level = ujson.dumps(value, True)
         
     message = property(fget=getmessage, fset=setmessage)
         

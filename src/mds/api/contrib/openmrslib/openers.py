@@ -6,7 +6,7 @@
 import urllib
 import cookielib
 import urllib2
-import cjson
+import ujson
 import re  
 import base64
 import logging

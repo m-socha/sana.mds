@@ -1,4 +1,4 @@
-import cjson
+import ujson
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django import forms
@@ -70,7 +70,7 @@ def log_list(request):
         obj = p.get_representation(rep = 'full')
         m = obj.pop('message')
         try:
-            obj['message'] = cjson.decode(m,True)
+            obj['message'] = ujson.loads(m,True)
             print 'decoded'
         except:
             obj['message'] = m
@@ -89,12 +89,12 @@ def log_detail(request, uuid):
         print type(log.messages)
         
         for x in log.messages:
-            x['message'] = cjson.decode(x)
+            x['message'] = ujson.loads(x)
             print x['message']
     except:
         data = log.message
     message = {'id': uuid, 'data': data }
-    return HttpResponse(cjson.encode(message))
+    return HttpResponse(ujson.dumps(message))
 
 def home(request):
     """Top level url

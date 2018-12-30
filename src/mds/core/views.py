@@ -3,7 +3,7 @@ Created on Aug 3, 2012
 
 @author: Sana Development
 '''
-import cjson
+import ujson
 import logging
 
 from django.http import HttpResponse
@@ -57,7 +57,7 @@ def home(request):
     }
     accept = request.META.get('HTTP_ACCEPT',None)
     if 'application/json' in request.META.get('HTTP_ACCEPT'):
-        return HttpResponse(cjson.encode(data))
+        return HttpResponse(ujson.dumps(data))
     else:
         return render_to_response('index.html', RequestContext(request))
     '''
@@ -66,7 +66,7 @@ def home(request):
     user = authenticate(username=username, password=password)
     
     if user is not None:
-        return HttpResponse(cjson.encode( {
+        return HttpResponse(ujson.dumps( {
                'status':'SUCCESS',
                'code':200,
                'message': version()}))
@@ -74,7 +74,7 @@ def home(request):
         message = unicode('UNAUTHORIZED:Invalid credentials!')
         logging.warn(message)
         logging.debug(u'User' + username)
-        return HttpResponse(cjson.encode({
+        return HttpResponse(ujson.dumps({
                 'status':'FAIL',
                 'code':401, 
                 'message': message}))
@@ -89,7 +89,7 @@ def _list(request,*args,**kwargs):
     objs = []
     for obj in paginator.page(start).object_list.all():
         try:
-            obj.message = cjson.decode(obj.message,True)
+            obj.message = ujson.loads(obj.message,True)
         except:
             pass
         objs.append(obj)
@@ -121,21 +121,21 @@ def log_report(request):
 def log_detail(request, uuid):
     log = Event.objects.get(uuid=uuid)
     data = []
-    messages = cjson.decode(log.messages)
+    messages = ujson.loads(log.messages)
     for m in messages:
         try:
-            m['message'] = cjson.decode(m['message'])
+            m['message'] = ujson.loads(m['message'])
         except:
             pass
         
         data.append(m)
-#           m['message']  = cjson.decode(m['message'])
+#           m['message']  = ujson.loads(m['message'])
 #            data.append(m)
 #        except:
             
             
     message = { 'message': data, 'uuid': uuid, }
-    return HttpResponse(cjson.encode(message))
+    return HttpResponse(ujson.dumps(message))
 
 def log(request,*args,**kwargs):
     query = dict(request.GET.items())
@@ -230,7 +230,7 @@ def mobile_authenticate(request,**kwargs):
     except:
         pass
     if user is not None and observer is not None:
-        return HttpResponse(cjson.encode( {
+        return HttpResponse(ujson.dumps( {
                'status':'SUCCESS',
                'code':200,
                'message': [
@@ -243,7 +243,7 @@ def mobile_authenticate(request,**kwargs):
         message = unicode('UNAUTHORIZED:Invalid credentials!')
         logging.warn(message)
         logging.debug(u'User' + username)
-        return HttpResponse(cjson.encode({
+        return HttpResponse(ujson.dumps({
                 'status':'FAIL',
                 'code':401, 
                 'message': []}))
