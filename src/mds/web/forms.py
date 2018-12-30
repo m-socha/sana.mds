@@ -50,6 +50,7 @@ def concept_choice_list():
 class EmptyEncounterForm(forms.ModelForm):
     class Meta:
         model = Encounter
+        fields = "__all__"
         widgets = {
             "device":forms.HiddenInput(),
             "procedure":forms.HiddenInput(),
@@ -62,6 +63,7 @@ class EncounterTaskForm(forms.ModelForm):
     """
     class Meta:
         model = EncounterTask
+        fields = "__all__"
     subject = forms.ChoiceField(subject_choice_list(), label="Patient")
     procedure = forms.ChoiceField(((x.uuid,x.title) for x in Procedure.objects.exclude(uuid__iexact="303a113c-6345-413f-88cb-aa6c4be3a07d")))
     assigned_to = forms.ModelChoiceField(queryset=Observer.objects.all())
@@ -142,11 +144,13 @@ class AllowReadonlyModelForm(AllowReadonly, forms.ModelForm):
 class ProcedureForm(AllowReadonlyModelForm):
     class Meta:
         model = Procedure
+        fields = "__all__"
     class NewMeta:
         readonly = ['uuid','created',]
 
 class UserInline(InlineFormSet):
     model = User
+    fields = "__all__"
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -177,3 +181,4 @@ class BlankUserForm(UserForm):
 class ObserverForm(forms.ModelForm):
     class Meta:
         model =User
+        fields = "__all__"
