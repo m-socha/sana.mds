@@ -386,7 +386,7 @@ def write_complex_data(br):
     obs = v2.Observation.objects.get(encounter=br.procedure.guid,
 				     node=br.element_id)
     if not obs.concept.is_complex:
-	return
+        return
     #obs.value_complex = obs.value_complex.field.generate_filename(obs, fname)
     path, _ = os.path.split(obs.value_complex.path)
     if not os.path.exists(path):

@@ -115,22 +115,22 @@ class SavedProcedureHandler(BaseHandler):
             
             encounter.save()
             logging.debug("Saved encounter: " + encounter.uuid)
-	    observations = responses_to_observations(encounter, data,sort=True)
-	    
-	    for obs in observations:
-	        obs.save()
-	        
-	        if obs.is_complex:
-	            obs.create_file()
-	        
-	    #result, message = True, encounter
+            observations = responses_to_observations(encounter, data,sort=True)
             
-            if result:
-                response = succeed("Successfully saved the procedure: %s" % message)
-                logging.info("Saved procedure successfully registered.")
-            else:
-                response = fail(message)
-                logging.error("Failed to register procedure: %s" % message)
+            for obs in observations:
+                obs.save()
+                
+                if obs.is_complex:
+                    obs.create_file()
+                
+            #result, message = True, encounter
+                
+                if result:
+                    response = succeed("Successfully saved the procedure: %s" % message)
+                    logging.info("Saved procedure successfully registered.")
+                else:
+                    response = fail(message)
+                    logging.error("Failed to register procedure: %s" % message)
         except ValidationError, e:
             #for k,v in form._get_errors().items():
             #    logging.error("SavedProcedure argument %s:%s" % (k,v))
