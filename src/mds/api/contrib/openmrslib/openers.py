@@ -101,7 +101,7 @@ class OpenMRSOpener(AbstractHandler):
            currently only supports basic auth.
         """
         # if class has no "sessions" attr bail
-        skeys = getattr(self.__class__, "sessions". None)
+        skeys = getattr(self.__class__, "sessions", None)
         if not skeys:
             return None, None
         
