@@ -3,10 +3,10 @@
 :Authors: Sana Dev Team
 :Version: 2.0
 """
-import urllib
-import cookielib
+import urllib.request, urllib.parse, urllib.error
+import http.cookiejar
 import logging
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import cjson
 import time
 import base64
@@ -20,7 +20,7 @@ __all__ = ['OpenMRS']
 
 
 SESSION_STATUS = "authenticated"
-SESSION_INVALID = u"Invalid auth data" 
+SESSION_INVALID = "Invalid auth data" 
 SESSION_CONTENT = "sessionId"
 LIST_CONTENT  = "results"
 ERROR_CONTENT = "error"
@@ -50,11 +50,11 @@ def item_reader(response, all_unicode=False):
 
 def rest_reader(response, all_unicode=False):
     msg = cjson.decode(response.read(), all_unicode=all_unicode)
-    if ERROR_CONTENT in msg.keys():
+    if ERROR_CONTENT in list(msg.keys()):
         return error_reader(msg)
-    elif LIST_CONTENT in msg.keys():
+    elif LIST_CONTENT in list(msg.keys()):
         return resultlist_reader(msg[LIST_CONTENT])
-    elif SESSION_CONTENT in msg.keys():
+    elif SESSION_CONTENT in list(msg.keys()):
         return session_reader(response)
     else:
         # single item
@@ -103,7 +103,7 @@ def patient_form(first_name, last_name, patient_id, gender, birthdate):
 
 def patient_reader(response, all_unicode=False):
     msg = cjson.decode(response.read(), all_unicode=all_unicode)
-    if ERROR_CONTENT in msg.keys():
+    if ERROR_CONTENT in list(msg.keys()):
         return error_reader(msg)
     else:
         result = []
@@ -225,17 +225,17 @@ class OpenMRS(openers.OpenMRSOpener):
         #session_path = self.build_url("sessions",query=auth)
         opener, session = self.open_session(username, password)
         if not session["authenticated"]:
-            raise Exception(u"username and password combination incorrect!")
+            raise Exception("username and password combination incorrect!")
         
         # short circuit here
         if url ==  self.build_url("sessions"):
-            return u"username and password validated!"
+            return "username and password validated!"
         
         jsessionid = session.get("sessionId")
-        req = urllib2.Request(url)
+        req = urllib.request.Request(url)
         req.add_header("jsessionid", jsessionid)
         if kwargs:
-            data = cjson.encode(kwargs) if use_json else urllib.urlencode(kwargs)
+            data = cjson.encode(kwargs) if use_json else urllib.parse.urlencode(kwargs)
             req.add_data(data)
         logging.debug("Request: %s" % req.get_full_url())
         logging.debug("...headers: %s" % req.header_items())
@@ -246,16 +246,16 @@ class OpenMRS(openers.OpenMRSOpener):
         logging.debug("Opening session")
         url = self.build_url("sessions")
         #opener = self.build_opener(url, username, password)
-        cookies = cookielib.CookieJar()
-        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        cookies = http.cookiejar.CookieJar()
+        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, url, username, password)
-        auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib2.build_opener(auth_handler,
-                urllib2.HTTPCookieProcessor(cookies),)
-        urllib2.install_opener(opener)
-        req = urllib2.Request(url)
+        auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib.request.build_opener(auth_handler,
+                urllib.request.HTTPCookieProcessor(cookies),)
+        urllib.request.install_opener(opener)
+        req = urllib.request.Request(url)
         basic64 = lambda x,y: base64.encodestring('%s:%s' % (x, y))[:-1]
-        print basic64(username, password), username, password
+        print(basic64(username, password), username, password)
         if username and password:
             req.add_header("Authorization", "Basic %s" % basic64(username, password))
         #session = urllib2.urlopen(req)
@@ -294,7 +294,7 @@ class OpenMRS(openers.OpenMRSOpener):
         content = []
         for uri in response:
             person = cjson.decode(self.open(uri+"?v=full", username, password).read())
-            print person
+            print(person)
             patient = {}
             name = person["names"]
             patient['first_name'] = name["givenName"]
@@ -318,7 +318,7 @@ class OpenMRS(openers.OpenMRSOpener):
             response = self.wsdispatch("patient", pargs, auth=auth, data=data)
             content = response.read()
             return content
-        except Exception, e:
+        except Exception as e:
             logging.info("Exception trying to create patient: %s" % str(e))
 
     def _login(self, username=None, password=None):
@@ -327,7 +327,7 @@ class OpenMRS(openers.OpenMRSOpener):
             self.opener.open("%sloginServlet" % self.host, data)
             logging.debug("Success: Validating with OpenMRS loginServlet")
             result = True
-        except Exception, e:
+        except Exception as e:
             logging.debug("Error logging into OpenMRS: %s" % e)
             result = False
         return result
@@ -382,7 +382,7 @@ class OpenMRS(openers.OpenMRSOpener):
             logging.debug("Validating permissions to manage sana queue")
             opener, session = self.open_session(username, password)
             if not session["authenticated"]:
-                raise Exception(u"username and password combination incorrect!")
+                raise Exception("username and password combination incorrect!")
 
             url = "%smoduleServlet/sana/permissionsServlet" % self.host
             response = opener.open(url).read()
@@ -428,7 +428,7 @@ class OpenMRS(openers.OpenMRSOpener):
             logging.debug("Done with upload")
             
         except Exception as e:
-            print e
+            print(e)
             logging.error("Exception in uploading procedure: %s" 
                           % saved_procedure_id)
             raise e

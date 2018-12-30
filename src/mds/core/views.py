@@ -81,7 +81,7 @@ def home(request):
     '''
 
 def _list(request,*args,**kwargs):
-    query = dict(request.GET.items())
+    query = dict(list(request.GET.items()))
     start = int(query.get('start', 1))
     limit = int(query.get('limit', 20))
     objects = Event.objects.all().filter().order_by('-created')
@@ -97,7 +97,7 @@ def _list(request,*args,**kwargs):
             'limit': limit,
             'start': start,
             "rate": int(query.get('refresh', 5)),
-            'range': range(1, paginator.num_pages + 1),
+            'range': list(range(1, paginator.num_pages + 1)),
             "version": settings.API_VERSION }
     return data
 
@@ -110,9 +110,9 @@ def log_list(request):
     return render_to_response('logging/list.html', RequestContext(request,data))
 
 def log_report(request):
-    post = dict(request.POST.items())
+    post = dict(list(request.POST.items()))
     selected = []
-    for k,v in post.items():
+    for k,v in list(post.items()):
         if v:
             selected.append(k)
     objects = Event.objects.all().filter(uuid__in=selected)
@@ -138,12 +138,12 @@ def log_detail(request, uuid):
     return HttpResponse(cjson.encode(message))
 
 def log(request,*args,**kwargs):
-    query = dict(request.GET.items())
+    query = dict(list(request.GET.items()))
     page = int(query.get('page', 1))
     page_size = int(query.get('page_size', 20))
     
     data = {'object_list': {},
-            'page_range': range(0, 1),
+            'page_range': list(range(0, 1)),
             'page_size': page_size,
             'page': page,
             "rate": int(query.get('refresh', 5)) }
@@ -171,11 +171,11 @@ def encounter(request,**kwargs):
                         "concept": obs.concept.name}
                 if obs.concept.is_complex:
                     obsdata["url"] = obs.value_complex.url
-                    obsdata["thumb"] = u''
+                    obsdata["thumb"] = ''
                     obsdata["value"] =  obs.value_complex.url
                 else:
                     obsdata["url"] = ""
-                    obsdata["value"] =  unicode(obs.value)
+                    obsdata["value"] =  str(obs.value)
                 observations.append(obsdata)
             obj['observations'] = observations
             data.append(obj)
@@ -240,9 +240,9 @@ def mobile_authenticate(request,**kwargs):
                     }
                 ]}))
     else:
-        message = unicode('UNAUTHORIZED:Invalid credentials!')
+        message = str('UNAUTHORIZED:Invalid credentials!')
         logging.warn(message)
-        logging.debug(u'User' + username)
+        logging.debug('User' + username)
         return HttpResponse(cjson.encode({
                 'status':'FAIL',
                 'code':401, 

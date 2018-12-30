@@ -86,7 +86,7 @@ def get_field_value(field, instance, default=None):
             value = instance.get(field, default) if default else instance.get(field)
         elif isinstance(instance, object):
             value = getattr(instance, field,default) if default else getattr(instance,field)
-    except Exception, e:
+    except Exception as e:
         raise FieldException('Instance has no ield %s' % field, e)
     return value
     

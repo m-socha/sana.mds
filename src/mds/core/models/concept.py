@@ -121,7 +121,7 @@ class Relationship(models.Model):
     category = models.ForeignKey('RelationshipCategory')
     
     def __unicode__(self):
-        return u'{to} {relationship} {from}'.format(self.to_concept.name, 
+        return '{to} {relationship} {from}'.format(self.to_concept.name, 
                                                     self.from_conept.name, 
                                                     self.category.name)
 

@@ -10,8 +10,8 @@ import cjson
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import ForeignKey
-from piston.handler import BaseHandler
-from piston.utils import rc
+from piston3.handler import BaseHandler
+from piston3.utils import rc
 
 from .decorators import validate
 from .responses import succeed, error
@@ -27,7 +27,7 @@ class UnsupportedCRUDException(Exception):
         self.value = value
         
     def __unicode__(self):
-        return unicode(self.value)
+        return str(self.value)
 
 def get_root(request):
     host = request.get_host()
@@ -36,7 +36,7 @@ def get_root(request):
     return result
 
 def get_start_limit(request): 
-    get = dict(request.GET.items())
+    get = dict(list(request.GET.items()))
     limit = int(get.get('limit', 0))
     start = int(get.get('start', 1))
     return start, limit
@@ -120,7 +120,7 @@ class DispatchingHandler(BaseHandler,HandlerMixin):
             logging.info('POST success object.uuid=%s' % instance.uuid)
             model = getattr(self,'model')
             return succeed(model.objects.filter(uuid=instance.uuid))
-        except Exception, e:
+        except Exception as e:
             logging.error('ERROR')
             return self.trace(request, e)
       
@@ -140,7 +140,7 @@ class DispatchingHandler(BaseHandler,HandlerMixin):
                     logging.info("No querystring")
                     response = BaseHandler.read(self,request)
             return succeed(response)
-        except Exception, e:
+        except Exception as e:
             return self.trace(request, e)
             
     @validate('PUT')
@@ -154,7 +154,7 @@ class DispatchingHandler(BaseHandler,HandlerMixin):
             logging.info("Success updating {klazz}:{uuid}".format(
                 klazz=getattr(self,'model'), uuid=uuid))
             return succeed(msg)
-        except Exception, e:
+        except Exception as e:
             return self.trace(request, e)
     
     def delete(self,request, uuid=None):
@@ -165,13 +165,13 @@ class DispatchingHandler(BaseHandler,HandlerMixin):
                 raise Exception("UUID required for delete.")
             msg = self._delete(uuid)
             return succeed(msg)
-        except Exception, e:
+        except Exception as e:
             return self.trace(request, e)
 
     def trace(self,request, ex=None):
         try:
             if settings.DEBUG:
-                logging.error(unicode(ex))
+                logging.error(str(ex))
             _,message,_ = logstack(self,ex)
             return error(message)
         except:
@@ -183,7 +183,7 @@ class DispatchingHandler(BaseHandler,HandlerMixin):
         klazz = getattr(self,'model')
         uuid = raw_data.get('uuid',None)
         logging.debug("uuid=%s" % uuid)
-        if raw_data.has_key('uuid'):
+        if 'uuid' in raw_data:
             logging.info("RAW data has uuid: %s" % uuid)
             data['uuid'] = raw_data.get('uuid')
             #instance = klazz(**raw_data)
@@ -232,9 +232,9 @@ class DispatchingHandler(BaseHandler,HandlerMixin):
         raw_data = request.raw_data
         
         obj = model.objects.get(uuid=uuid)
-        if 'uuid' in raw_data.keys():
+        if 'uuid' in list(raw_data.keys()):
             raw_data.pop('uuid')
-        for k,v in data.items():
+        for k,v in list(data.items()):
             if k in self.fks:
                 _obj = getattr(obj,k).__class__.objects.get(uuid=v)
                 v = _obj

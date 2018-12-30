@@ -13,9 +13,9 @@ from django.core.urlresolvers import get_resolver, get_callable, get_script_pref
 from django.conf import settings
 from django.contrib.auth import authenticate
 
-AUTH_SUCCESS = u"Successful authorization, {username}"
-AUTH_FAILURE = u"Unsuccessful authorization, {username}"
-AUTH_DISABLED = u"Disabled account, {username}"
+AUTH_SUCCESS = "Successful authorization, {username}"
+AUTH_FAILURE = "Unsuccessful authorization, {username}"
+AUTH_DISABLED = "Disabled account, {username}"
 
 # for the sana dispatcher
 SIGNALS = 'signals'
@@ -62,8 +62,8 @@ _MINOR_VERSION = '0'
 def version(): 
     return settings.API_VERSION
 
-API_VERSION = { u'API':settings.API_VERSION } 
-API_CONFIG_ERROR = u'Incorrect dispatch configuration'
+API_VERSION = { 'API':settings.API_VERSION } 
+API_CONFIG_ERROR = 'Incorrect dispatch configuration'
 
 
 def do_authenticate(request):

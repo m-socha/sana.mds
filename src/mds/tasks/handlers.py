@@ -4,7 +4,7 @@
 :version: 2.0
 :copyright: Sana 2012, released under BSD New License(http://sana.mit.edu/license)
 '''
-from piston.handler import BaseHandler
+from piston3.handler import BaseHandler
 
 from .forms import *
 from .models import *
@@ -44,7 +44,7 @@ class EncounterTaskHandler(DispatchingHandler):
     def update(self,request,uuid=None,*args,**kwargs):
         logging.info("update() %s, %s" % (request.method,request.user))
         data = self.flatten_dict(request.POST)
-        if 'uuid' in data.keys():
+        if 'uuid' in list(data.keys()):
             uuid = data.pop['uuid']
         logging.info("update() %s" % uuid)
         
@@ -69,7 +69,7 @@ class EncounterTaskHandler(DispatchingHandler):
         observer = data.pop("observer",None)
         if(observer):
             obj.observer = Observer.objects.get(uuid=observer)
-        for k,v in data.items():
+        for k,v in list(data.items()):
             setattr(obj,k,v)
         obj.save()
         return succeed(self.model.objects.filter(uuid=uuid))
