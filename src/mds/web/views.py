@@ -56,7 +56,6 @@ def login(request,*args,**kwargs):
             auth_login(request, user)
             return HttpResponseRedirect(next_page)
     else:
-        form = modelform_factory(User)
         return TemplateResponse(request,
             'web/login.html',
             {
