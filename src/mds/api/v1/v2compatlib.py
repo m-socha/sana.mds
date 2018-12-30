@@ -56,7 +56,7 @@ def strip_deprecated_observations(observations):
     """
     _obs = {}
     #_obs = dict([(lambda x: (k,v) for k not in deprecated)(observations)])
-    for k,v in list(observations.items()):
+    for k,v in observations.items():
         if k not in _deprecated:
             _obs[k] = v 
     return _obs
@@ -72,7 +72,7 @@ def element2obs(obs, allow_null=False):
         _obs['value'] = obs['answer']
     else:        
         return {}
-    node = list(obs.keys())[0]
+    node = obs.keys()[0]
     _obs['node'] = node
     _obs['concept'] = obs['concept']
     return _obs
@@ -83,7 +83,7 @@ def elements2obs(observations, allow_null=False):
         text dictionary, not the actual observations.
     """
     _obs_set = {}
-    for k,v in list(observations.items()):
+    for k,v in observations.items():
         _obs = {}
         #For now we require non-empty strings
         if v['answer']:
@@ -177,7 +177,7 @@ def responses_to_observations(encounter, responses,sort=False,reverse=False):
     observations = []
     logging.info("Converting %d observations" % len(responses))
     # Begin loop over observations
-    for node,data in list(responses.items()):
+    for node,data in responses.items():
         obs = None
         concept_name = data.get('concept', None)
         logging.info("" + node + ":"+concept_name)
@@ -433,11 +433,11 @@ if __name__ == '__main__':
         _ptext = sys.argv[3]
         _pr = lpp(path=_ptext)
         if sys.argv[2] == 'p':
-            print(' '*4,_pr.root.attrib)
+            print ' '*4,_pr.root.attrib
         elif sys.argv[2] == 'e':
             for e in _pr.elements:
-                print(' '*4, e)
+                print ' '*4, e
         elif sys.argv[2] == 'c':
             for c in _pr.concepts:
-                print(c)
+                print c
     

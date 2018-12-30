@@ -6,11 +6,11 @@ Created on Aug 11, 2012
 '''
 try:
     import json as simplejson
-except ImportError as e:
+except ImportError, e:
     import simplejson
     
 import logging
-import urllib.request, urllib.parse, urllib.error
+import urllib
 
 from django.conf import settings
 
@@ -53,7 +53,7 @@ class ClickatellOpener:
             messages = formatter(n) if formatter else n
             for message in messages:
     
-                params = urllib.parse.urlencode({
+                params = urllib.urlencode({
                         'user': settings.CLICKATELL_USER,
                         'password': settings.CLICKATELL_PASSWORD,
                         'api_id': settings.CLICKATELL_API,
@@ -63,9 +63,9 @@ class ClickatellOpener:
     
                 logging.info("Sending clickatell notification %s to %s" %
                              (message, phoneId))
-                response = urllib.request.urlopen(settings.CLICKATELL_URI % params).read()
+                response = urllib.urlopen(settings.CLICKATELL_URI % params).read()
                 logging.info("Clickatell response: %s" % response)
                 result = True
-        except Exception as e:
+        except Exception, e:
             logging.error("Couldn't submit Clickatell notification for %s: %s" % (phoneId, e))
         return result

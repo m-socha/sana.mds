@@ -4,7 +4,7 @@ Created on Aug 10, 2012
 :author: Sana Development Team
 :version: 2.0
 '''
-from urllib.parse import urljoin
+from urlparse import urljoin
 from django.utils.encoding import iri_to_uri
 
 from django.core.urlresolvers import get_resolver, get_callable, get_script_prefix
@@ -21,12 +21,12 @@ def build_rest_scheme(request,urlpatterns):
     host = request.get_host()
     path = request.get_full_path()
     root = '{0}{1}'.format(host,path)
-    print(root)
-    print(request.get_full_path())
-    print(request.get_host())
-    print(request.is_secure())
+    print root
+    print request.get_full_path()
+    print request.get_host()
+    print request.is_secure()
     
-    print(request.build_absolute_uri())
+    print request.build_absolute_uri()
     for klazz in _models:
         parent = klazz.__name__.lower()
         children = rels(klazz)
@@ -79,7 +79,7 @@ def handler_uri_templates(handler):
     def _convert(template, params=[]):
         """URI template converter"""
         paths = template % dict([p, "{%s}" % p] for p in params)
-        return '%s%s' % (get_script_prefix(), paths)
+        return u'%s%s' % (get_script_prefix(), paths)
     
     def _resources(obj):
         resource_uri= None

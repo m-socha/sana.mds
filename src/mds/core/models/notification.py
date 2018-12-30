@@ -42,6 +42,6 @@ class Notification(models.Model):
         msg = {'address': self.client,
                'subject': self.header,
                'message': self.message,}
-        for k,v in kwargs.items():
+        for k,v in kwargs.iteritems():
             msg[k] = v
         return cjson.encode(msg)

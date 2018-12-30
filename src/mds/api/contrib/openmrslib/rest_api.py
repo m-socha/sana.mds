@@ -24,9 +24,9 @@ class RESTSession(object):
         
 class RESTResponse(object):
     def __init__(self, response, decoder=None):
-        self._results = RESTResult(response,decoder=decoder) if 'results' in response else None
-        self._error = RESTError(response) if 'error' in response else None
-        self._session = RESTSession(response) if 'sessionId' in response else None
+        self._results = RESTResult(response,decoder=decoder) if response.has_key('results') else None
+        self._error = RESTError(response) if response.has_key('error') else None
+        self._session = RESTSession(response) if response.has_key('sessionId') else None
         self._instance = response
 
     def has_error(self):

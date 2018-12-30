@@ -4,8 +4,8 @@
 :version: 2.0
 :copyright: Sana 2012, released under BSD New License(http://sana.mit.edu/license)
 '''
-from piston3.resource import Resource
-from piston3.authentication import HttpBasicAuthentication
+from piston.resource import Resource
+from piston.authentication import HttpBasicAuthentication
 
 from mds.api.authentication import DjangoAuthentication, MultiAuthentication
 

@@ -38,17 +38,17 @@ def printstack(e):
     """ Prints stack trace to console."""
     _, val, tb = sys.exc_info()
     trace = traceback.format_tb(tb)
-    print('Error: ', e)
-    print('Value: ', val)
+    print 'Error: ', e
+    print 'Value: ', val
     for tbm in trace:
-        print(tbm)
+        print tbm
 
 def logstack(handler, e=None):
     logger = getattr(handler,'logger',logging)
     et, val, tb = sys.exc_info()
     trace = traceback.format_tb(tb)
     for tbm in trace:
-        logger.error(str(tbm))
+        logger.error(unicode(tbm))
     return et, val, tb
 
 def logtb(logger=None):
@@ -59,7 +59,7 @@ def logtb(logger=None):
     logger.error('...Exception type: %s' % repr(et))
     logger.error('...Exception value: %s' %repr(val))
     for tbm in traceback.format_tb(tb):
-        logger.error(str(tbm))
+        logger.error(unicode(tbm))
 
 def dictzip(keys,values):
     """ zips to lists into a dictionary """
@@ -74,7 +74,7 @@ def dictzip(keys,values):
 
 def split(fin, path, chunksize=102400):
     """ Splits a file into a number of smaller chunks """
-    print((fin, path, chunksize))
+    print (fin, path, chunksize)
     if not os.path.exists(path):
         os.mkdir(path)
     partnum = 0

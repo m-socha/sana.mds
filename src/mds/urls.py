@@ -42,8 +42,8 @@ if settings.DEBUG:
         )
 
 if 'v1' in settings.APICOMPAT_INCLUDE:
-    from piston3.resource import Resource
-    from .mrs.handlers import *
+    from piston.resource import Resource
+    from mrs.handlers import *
     
     v1auth_resource = Resource(AuthHandler)
     v1notification_resource = Resource(NotificationHandler)

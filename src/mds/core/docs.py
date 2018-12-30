@@ -1,4 +1,4 @@
-from piston3.doc import generate_doc
+from piston.doc import generate_doc
 from .handlers import *
 
 

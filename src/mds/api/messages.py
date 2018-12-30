@@ -5,6 +5,6 @@
 Copyright Sana 2012, released under BSD New License(http://sana.mit.edu/license)
 '''
 
-AUTH_SUCCESS = "Successful authorization, {username}"
-AUTH_FAILURE = "Unsuccessful authorization, {username}"
-AUTH_DISABLED = "Disabled account, {username}"
+AUTH_SUCCESS = u"Successful authorization, {username}"
+AUTH_FAILURE = u"Unsuccessful authorization, {username}"
+AUTH_DISABLED = u"Disabled account, {username}"

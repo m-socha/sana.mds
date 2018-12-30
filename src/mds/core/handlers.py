@@ -11,8 +11,8 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
-from piston3.handler import BaseHandler
-from piston3.resource import Resource
+from piston.handler import BaseHandler
+from piston.resource import Resource
 
 from mds.api import do_authenticate, LOGGER
 from mds.api.contrib import backends
@@ -100,7 +100,7 @@ class SessionHandler(DispatchingHandler):
                     return fail(msg)
         except Exception as e:
             msg = "Internal Server Error"
-            logging.error(str(e))
+            logging.error(unicode(e))
             logtb()
             return error(msg)
         
@@ -283,7 +283,7 @@ class CompoundFormHandler(object):
     
     def create(request, *args, **kwargs):
         cleaned = {}
-        for k,v in list(getattr(self.__class__, "forms", {}).items()):
+        for k,v in getattr(self.__class__, "forms", {}).items():
             form = v(request.ITEMS[k])
             form.full_clean()
             cleaned[k] = form

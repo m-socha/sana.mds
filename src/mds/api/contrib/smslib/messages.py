@@ -6,11 +6,11 @@ Created on Aug 11, 2012
 '''
 try:
     import json as simplejson
-except ImportError as e:
+except ImportError, e:
     import simplejson
     
 import logging, telnetlib
-from .kannel import send_kannel_notification
+from kannel import send_kannel_notification
 
 SMS_MESSAGE_SIZE = 140
 
@@ -77,7 +77,7 @@ def format_sms(n):
         message = message[header_remaining:]
         result.append(header + header_message)
 
-        for i in range(2, messages+1):
+        for i in xrange(2, messages+1):
             subsequent_data['d'] = '%d/%d' % (i,messages)
             subsequent_header = encoder.encode(subsequent_data)
             subsequent_remaining = SMS_MESSAGE_SIZE - len(subsequent_header)
@@ -102,7 +102,7 @@ def send_fake_notification(n, phoneId):
     """
     try:
         message = "<patient=%s>Patient %s : %s" % (n.patient_id, n.patient_id, n.message)
-        print("Sending", message)
+        print "Sending", message
         t = telnetlib.Telnet('127.0.0.1', 5554)
         t.read_until("OK")
 
@@ -118,7 +118,7 @@ def send_fake_notification(n, phoneId):
 
         n.delivered = True
         n.save()
-    except Exception as e:
+    except Exception, e:
         n.delivered = False
         n.save()
         logging.error("Couldn't submit notification for %s" % str(e))

@@ -3,10 +3,10 @@
 :Authors: Sana Dev Team
 :Version: 2.0
 """
-import urllib.request, urllib.parse, urllib.error
-import http.cookiejar
+import urllib
+import cookielib
 import logging
-import urllib.request, urllib.error, urllib.parse
+import urllib2
 import cjson
 import time
 import base64
@@ -26,7 +26,7 @@ __all__ = [
 
 
 SESSION_STATUS = "authenticated"
-SESSION_INVALID = "Invalid auth data" 
+SESSION_INVALID = u"Invalid auth data" 
 SESSION_CONTENT = "sessionId"
 LIST_CONTENT  = "results"
 ERROR_CONTENT = "error"
@@ -220,13 +220,13 @@ class OpenMRSHandler(OpenMRSOpener):
     def open(self, url, username=None, password=None, **kwargs):
         opener, session = self.open_session(username, password)
         if not session["authenticated"]:
-            raise Exception("username and password combination incorrect!")
+            raise Exception(u"username and password combination incorrect!")
         
         # short circuit here
         if url ==  self.build_url("sessions"):
-            return "username and password validated!"
+            return u"username and password validated!"
         jsessionid = session.get("sessionId")
-        req = urllib.request.Request(url)
+        req = urllib2.Request(url)
         req.add_header("jsessionid", jsessionid)
         if kwargs:
             data = kwargs.get('data',kwargs)
@@ -242,14 +242,14 @@ class OpenMRSHandler(OpenMRSOpener):
     def open_session(self, username=None, password=None):
         logging.debug("Opening session")
         url = self.build_url("sessions")
-        cookies = http.cookiejar.CookieJar()
-        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+        cookies = cookielib.CookieJar()
+        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, url, username, password)
-        auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib.request.build_opener(auth_handler,
-                urllib.request.HTTPCookieProcessor(cookies),)
-        urllib.request.install_opener(opener)
-        req = urllib.request.Request(url)
+        auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib2.build_opener(auth_handler,
+                urllib2.HTTPCookieProcessor(cookies),)
+        urllib2.install_opener(opener)
+        req = urllib2.Request(url)
         basic64 = lambda x,y: base64.encodestring('%s:%s' % (x, y))[:-1]
         if username and password:
             req.add_header("Authorization", "Basic %s" % basic64(username, password))
@@ -316,7 +316,7 @@ class OpenMRSHandler(OpenMRSOpener):
             self.opener.open("%sloginServlet" % self.host, data)
             logging.debug("Success: Validating with OpenMRS loginServlet")
             result = True
-        except Exception as e:
+        except Exception, e:
             logging.debug("Error logging into OpenMRS: %s" % e)
             result = False
         return result

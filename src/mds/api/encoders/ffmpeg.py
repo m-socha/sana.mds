@@ -85,7 +85,7 @@ class FFmpeg:
                     message = "FFMPEG: Success %s" % binary.data.path
                     
                 # Catch any errors from updating binary fields
-                except Exception as e:
+                except Exception, e:
                     message = "Error updating binary post conversion: %s" % e
                     logging.error(message)
                     
@@ -98,7 +98,7 @@ class FFmpeg:
             binary.conversion_complete = True
             binary.save()              
         # Catch any errors thrown by ffmpeg execution
-        except Exception as e:
+        except Exception, e:
             message = "Conversion error, check ffmpeg installation: %s" % e
             logging.error(message)
         return result, message

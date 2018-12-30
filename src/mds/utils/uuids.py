@@ -44,7 +44,7 @@ _uuid5hex = re.compile(UUID5_FORMAT, re.I)
 class InvalidVersionException(Exception):
     def __unicode__(self):
         message = self.message if self.message else None
-        return str("Invalid version string.").format(str(message))
+        return unicode("Invalid version string.").format(unicode(message))
 
 def validate(uuid, version=ANY):
     ''' Validates a str object is a valid format.

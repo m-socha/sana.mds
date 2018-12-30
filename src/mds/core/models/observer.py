@@ -31,4 +31,4 @@ class Observer(models.Model):
     voided = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return str(self.user)
+        return unicode(self.user)

@@ -28,15 +28,15 @@ class Set(object):
         for x in other:
             if x in self.data:
                 res[x] = None
-        return Set(list(res.keys()))
+        return Set(res.keys())
     
     def union(self, other):
         res = {}
         for x in other:
             res[x] = None
-        for x in list(self.data.keys()):
+        for x in self.data.keys():
             res[x] = None
-        return Set(list(res.keys()))
+        return Set(res.keys())
     
     def concat(self, value):
         for x in value:
@@ -75,7 +75,7 @@ class ObservationSet(Set):
                     legacy bit for setting the node name equal to the dict key
         """
         complete = True
-        for k,v in list(obs_data.items()):
+        for k,v in obs_data.items():
             _obs = {}
             logging.debug('Creating observation, %s {"%s":%s}'% (type(v).__name__,k,v))
             _obs['encounter'] = self.encounter

@@ -3,7 +3,7 @@
 :author: Sana Development Team
 :version: 2.0
 """
-import urllib.request, urllib.parse, urllib.error
+import urllib
 import logging
 
 from django.conf import settings
@@ -31,13 +31,13 @@ def send_review_notification(instance,addresses,subject,
         #print urlencoded)
         message = template % (url,mobile_url)
         logging.debug("Review message:\n %s" % message)
-        print(message)
+        print message
         send_mail(subject, message, settings.SMTP_REPLYTO,addresses, 
                     fail_silently=False,
                     auth_user=auth_user, 
                     auth_password=auth_password)
         for address in addresses:
-            print(address)
+            print address
             logging.info("Review notification sent successfully to %s" % address)
         result = True
     except:

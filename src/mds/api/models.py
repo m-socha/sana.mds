@@ -7,7 +7,6 @@ Created on Aug 10, 2012
 from django.db import models
 
 from .utils import make_uuid
-import collections
 
 class RepresentationException(Exception):
     def __init__(self):
@@ -73,7 +72,7 @@ class RESTModel(models.Model):
             fieldobj = getattr(self, field)
             if isinstance(field, RESTModel):
                 representation[field] = fieldobj.get_representation(rep=rep)
-            elif isinstance(fieldobj, collections.Callable):
+            elif callable(fieldobj):
                 representation[field] = fieldobj(**kwargs)
             else:
                 representation[field] = fieldobj

@@ -7,7 +7,7 @@ successful transcoding.
 :Version: 1.1
 """
 #TODO The above really should have used __call__ 
-
+from __future__ import with_statement
 
 from mds.api.encoders.ffmpeg import FFmpeg
 
@@ -66,7 +66,7 @@ def is_convertible(content_type):
          content_type
              the type of content to check for needed conversion
     """
-    return content_type in TYPES
+    return TYPES.has_key(content_type)
 
 def get_extension(content_type):
     """Returns file extension

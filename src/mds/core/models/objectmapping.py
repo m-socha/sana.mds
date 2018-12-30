@@ -10,7 +10,7 @@ _models = {"Concept": Concept,
            "Encounter": Encounter,
            "Observer": Observer, 
            "Observation": Observation}
-_choices = ((k,v.name) for k,v in list(_models.items()))
+_choices = ((k,v.name) for k,v in _models.items())
 
 class ObjectMapping(models.Model):
     ''' Mapping from internal to external unique identiifer

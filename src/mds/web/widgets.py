@@ -24,7 +24,7 @@ class SpanWidget(forms.Widget):
 
     def render(self, name, value, attrs=None):
         final_attrs = self.build_attrs(attrs, name=name)
-        return mark_safe('<span%s >%s</span>' % (
+        return mark_safe(u'<span%s >%s</span>' % (
             forms.util.flatatt(final_attrs), self.original_value))
 
     def value_from_datadict(self, data, files, name):

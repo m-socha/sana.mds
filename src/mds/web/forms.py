@@ -32,7 +32,7 @@ __all__ = [
 
 def subject_choice_list():
     subject_list = (
-        (x.uuid, "%s - %s, %s" % (x.system_id,x.family_name, x.given_name)) for x in Subject.objects.all().exclude(voided=True))
+        (x.uuid, u"%s - %s, %s" % (x.system_id,x.family_name, x.given_name)) for x in Subject.objects.all().exclude(voided=True))
     return  subject_list
 
 def concept_choice_list():
@@ -96,7 +96,7 @@ class AllowReadonly(object):
         readonly = self.NewMeta.readonly
         if not readonly:
             return
-        for name, field in list(self.fields.items()):
+        for name, field in self.fields.items():
             if name in readonly:
                 field.widget = SpanWidget()
             elif not isinstance(field, SpanField):

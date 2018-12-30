@@ -20,11 +20,11 @@ def trace(f):
     """
     def new_f(*args, **kwargs):
         extra = {'mac':'', 'type':''}
-        logging.info("TRACE %s ENTER" % f.__name__,extra=extra)
+        logging.info("TRACE %s ENTER" % f.func_name,extra=extra)
         result = f(*args, **kwargs)
-        logging.info("TRACE %s EXIT" % f.__name__,extra=extra)
+        logging.info("TRACE %s EXIT" % f.func_name,extra=extra)
         return result
-    new_f.__name__ = f.__name__
+    new_f.func_name = f.func_name
     return new_f
 
 
@@ -55,7 +55,7 @@ def flush(flushable):
 
 def mark(module, line,*args):
     """ in code tracing util for debugging """
-    print(('Mark %s.%s: %s' % (module, line, args)))
+    print('Mark %s.%s: %s' % (module, line, args))
 
 
 
