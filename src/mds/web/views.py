@@ -552,8 +552,7 @@ class ModelFormMixin(object):
     exclude = ()
     fields = '__all__'
     _fields = []
-    success_url_format = "/{app}/{model}/%(id)s/"
-    app = 'mds.web'
+    success_url_format = "/web/{model}/%(id)s/"
     
     def __init__(self, *args, **kwargs):
         super(ModelFormMixin,self)
@@ -565,7 +564,6 @@ class ModelFormMixin(object):
         if not hasattr(self,'exclude'):
             self.exclude = ()
         _model = getattr(self,"model").__name__.lower()
-        _app = getattr(self,'app').replace(".","/")
         setattr(self,'success_url', 
                 self.success_url_format.format(app=_app,model=_model))
 
@@ -919,6 +917,7 @@ class ProcedureGroupUpdateView(ModelFormMixin, UpdateView):
     model = ProcedureGroup
     template_name = 'web/form.html'
     form_class = ProcedureGroupForm
+    fields = None
 
 class SubjectListView(ModelListMixin, ListView):
     model = Subject
