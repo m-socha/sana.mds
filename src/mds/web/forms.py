@@ -3,7 +3,7 @@
 :Version: 2.0
 '''
 import logging
-from django.contrib.staticfiles.templatetags.staticfiles import static
+
 from datetime import datetime
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
@@ -155,11 +155,12 @@ class ProcedureGroupForm(forms.ModelForm):
     """ A simple procedure group form
     """
     procedures = forms.ModelMultipleChoiceField(queryset=Procedure.objects.all(), required=False)
+    media
     class Media:
         css = {
-            'all':(static('web/css/chosen.min.css')),
+            'all':(static("web/css/chosen.min.css"),),
         }
-        js = (static('web/js/chosen.jquery.min.js'), static('web/js/chosen-multiselect.js'))
+        js = (static("web/js/chosen.jquery.min.js"),static("web/js/chosen-multiselect.js"))
     class Meta:
         model = ProcedureGroup
         fields = "__all__"
