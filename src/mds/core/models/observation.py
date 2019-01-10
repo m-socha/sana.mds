@@ -24,7 +24,7 @@ class Observation(models.Model):
     def __unicode__(self):
         return "%s %s" % ( 
             self.concept.name,
-            unicode(self.value), 
+            str(self.value), 
     )
     uuid = models.SlugField(max_length=36, unique=True, default=make_uuid, editable=False)
     """ A universally unique identifier """
@@ -156,7 +156,7 @@ class Observation(models.Model):
         if self.is_complex:
             return "%d/%d" % (self._complex_progress, self._complex_size)
         else:
-            return u"NA"
+            return "NA"
 
     def encounter_uuid(self):
         return self.encounter.uuid

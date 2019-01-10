@@ -6,14 +6,14 @@ Created on Aug 10, 2012
 '''
 try:
     import json as simplejson
-except ImportError, e:
+except ImportError as e:
     import simplejson
 import sys, traceback
 import logging
 
 from django.conf import settings
 from django.forms import ValidationError
-from piston.handler import BaseHandler
+from piston3.handler import BaseHandler
 
 from mds.core.handlers import EventHandler as BaseRequestHandler
 
@@ -78,7 +78,7 @@ class AuthHandler(BaseHandler):
             logging.info("username %s" % auth['username'])
             opener = openmrslib.build_opener(host=settings.OPENMRS_SERVER_URL)
             return succeed(opener.wsdispatch(wsname, auth=auth))
-        except Exception, e:
+        except Exception as e:
             msg = "%s" % e
             logging.error(msg)
             return fail(msg)
@@ -131,7 +131,7 @@ class SavedProcedureHandler(BaseHandler):
                 else:
                     response = fail(message)
                     logging.error("Failed to register procedure: %s" % message)
-        except ValidationError, e:
+        except ValidationError as e:
             #for k,v in form._get_errors().items():
             #    logging.error("SavedProcedure argument %s:%s" % (k,v))
             for err in form.errors:
@@ -139,7 +139,7 @@ class SavedProcedureHandler(BaseHandler):
             response = fail("Invalid ProcedureSubmitForm data")
             #raise Exception('Saved procedure submission was invalid')
     
-        except Exception, e:
+        except Exception as e:
             et, val, tb = sys.exc_info()
             trace = traceback.format_tb(tb)
             error = "Exception : %s %s %s" % (et, val, trace[0])
@@ -198,7 +198,7 @@ class EventHandler(BaseRequestHandler):
                 response = succeed(message)
             else:
                 response = fail(message)
-        except Exception, e:
+        except Exception as e:
             logging.error("Error while processing events: %s" % e)
             response = fail("Could not parse eventlog submission.")
         return render_json_response(response)
@@ -295,7 +295,7 @@ class PatientHandler(BaseHandler):
                         message.append(patient)
             logging.debug("message: %s" % message)
             return succeed(message)
-        except Exception, e:
+        except Exception as e:
             logging.error("Error: %s" % str(e))
             printstack(e)
             return fail("%s" % e)

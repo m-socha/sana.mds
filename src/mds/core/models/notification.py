@@ -42,6 +42,6 @@ class Notification(models.Model):
         msg = {'address': self.client,
                'subject': self.header,
                'message': self.message,}
-        for k,v in kwargs.iteritems():
+        for k,v in kwargs.items():
             msg[k] = v
         return ujson.dumps(msg)

@@ -7,11 +7,11 @@ Created on Aug 11, 2012
 
 try:
     import json as simplejson
-except ImportError, e:
+except ImportError as e:
     import simplejson
     
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from django.conf import settings
 from .messages import format_sms
@@ -55,7 +55,7 @@ class ZnisOpener:
             messages = formatter(message_body) if formatter else message_body
             for message in messages:
     
-                params = urllib.urlencode({
+                params = urllib.parse.urlencode({
                         'userid': settings.ZNISMS_USER,
                         'apikey': settings.ZNISMS_APIKEY,
                         'senderid': settings.ZNISMS_SENDERID,
@@ -65,9 +65,9 @@ class ZnisOpener:
     
                 logging.info("Sending ZniSMS notification %s to %s" %
                              (message, phoneId))
-                response = urllib.urlopen(settings.ZNISMS_URL % params).read()
+                response = urllib.request.urlopen(settings.ZNISMS_URL % params).read()
                 logging.info("ZniSMS response: %s" % response)
                 result = True
-        except Exception, e:
+        except Exception as e:
             logging.error("Couldn't submit ZniSMS notification for %s: %s" % (phoneId, e))
         return result

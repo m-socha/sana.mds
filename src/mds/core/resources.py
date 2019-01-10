@@ -1,5 +1,5 @@
 
-from piston.resource import Resource
+from piston3.resource import Resource
 from .handlers import *
 
 __all__ = [

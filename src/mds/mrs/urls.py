@@ -12,7 +12,7 @@ from django.conf.urls.defaults import patterns, url, include
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from piston.resource import Resource
+from piston3.resource import Resource
 
 
 # from version 1.x

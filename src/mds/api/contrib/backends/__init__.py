@@ -56,7 +56,7 @@ def autocreate(handler_dict=None):
         except:
             raise ImportError('TARGETS must be defined in settings.py')
 
-    for model, handler_strs in handler_dict.items():
+    for model, handler_strs in list(handler_dict.items()):
         for handlers in handler_strs:
             for handler in handler_strs:
                 register_handler(model,handler)
