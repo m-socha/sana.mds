@@ -159,7 +159,7 @@ class ProcedureGroupForm(forms.ModelForm):
     procedures = forms.ModelMultipleChoiceField(queryset=Procedure.objects.all(), required=False)
     class Media:
         css = {
-            'all':("/static/web/css/chosen.min.css"),
+            'all':("/static/web/css/chosen-min.css"),
         }
         js = ("web/js/chosen.jquery.min.js", "web/js/chosen-multiselect.js")
     class Meta:
