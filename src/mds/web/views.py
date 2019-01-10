@@ -560,7 +560,7 @@ class ModelFormMixin(object):
         #    self.fields = self.get_default_model_fields()
         self._fields = self.field_names()
         if not hasattr(self,'form'):
-            self.form = modelform_factory(self.model)
+            self.form = modelform_factory(self.model, fields='__all__')
         if not hasattr(self,'exclude'):
             self.exclude = ()
         _model = getattr(self,"model").__name__.lower()
