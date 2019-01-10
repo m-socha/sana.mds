@@ -2,4 +2,5 @@
 
 $(document).ready(function() {
     $("select[multiple]").chosen();
+    $(".chosen-container").css({"min-width": 135});
 });
