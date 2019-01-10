@@ -8,15 +8,14 @@ heroku app.
 with django-piston3 (i.e. import piston3)
 3. In ./src/mds/heroku_settings, copy both templates files into ./src/mds as settings.py and local_settings.py respectively
 4. In ./src, create a directory named "staticfiles" and create a placeholder file inside (i.e. Placeholder.text)
-5. Remove line 474 in ./src/mds/web/views.py
-6. Run 2to3 across the entire codebase to convert from python 2 to python 3
-7. In ./src/mds/core/static/css, remove the jquery.mobile-1.4.0* files
+5. Run 2to3 across the entire codebase to convert from python 2 to python 3
+6. In ./src/mds/core/static/css, remove the jquery.mobile-1.4.0* files
 
 Then push the app to heroku via git push heroku master
 
 Notes
 ----------
 
-Steps 2 and 6 are necessary as heroku deployment relies on heroku_django package which needs Python 3.
+Steps 2 and 5 are necessary as heroku deployment relies on heroku_django package which needs Python 3.
 Step 4 is necessary for serving static files. The placeholder file in the directory allows the directory to be pushed to git
-Step 7 is necessary as otherwise the collectstatic step fails due to a missing file (further investigation needed)
+Step 6 is necessary as otherwise the collectstatic step fails due to a missing file (further investigation needed)
