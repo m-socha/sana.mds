@@ -909,7 +909,7 @@ class ProcedureGroupDetailView(ModelFormMixin,DetailView):
     slug_field = 'uuid'
     fields = ('uuid', 'created', 'modified', 'title', 'author', 'description', 'procedures', 'voided')
     
-class ProcedureGroupCreateView(ModelFormMixin, CreateView):
+class ProcedureGroupCreateView(CreateView):
     model = ProcedureGroup
     template_name = "web/form_new.html"
     form_class = ProcedureGroupForm
