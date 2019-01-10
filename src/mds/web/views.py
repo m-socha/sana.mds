@@ -471,7 +471,7 @@ class ModelListMixin(SortMixin):
         super(ModelListMixin,self)
         self._fields = self.field_names()
         if not hasattr(self,'form'):
-            self.form = modelform_factory(self.model)
+            self.form = modelform_factory(self.model, fields='__all__')
         if not hasattr(self,'exclude'):
             self.exclude = ()
 
