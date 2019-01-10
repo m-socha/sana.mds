@@ -5,9 +5,7 @@
 import logging
 
 from datetime import datetime
-from django.conf import settings
 from django import forms
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.forms.extras.widgets import SelectDateWidget
 from  django.forms.widgets import PasswordInput
 from django.contrib.admin.widgets import FilteredSelectMultiple
