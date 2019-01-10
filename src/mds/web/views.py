@@ -565,7 +565,7 @@ class ModelFormMixin(object):
             self.exclude = ()
         _model = getattr(self,"model").__name__.lower()
         setattr(self,'success_url', 
-                self.success_url_format.format(app=_app,model=_model))
+                self.success_url_format.format(model=_model))
 
     def field_names(self):
         if not getattr(self,'fields',None):
