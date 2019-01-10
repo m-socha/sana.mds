@@ -5,7 +5,7 @@ Created on Feb 29, 2012
 :Version: 2.0
 '''
 import logging
-import cjson
+import ujson
 
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage, EmptyPage

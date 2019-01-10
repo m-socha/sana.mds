@@ -1,5 +1,5 @@
 # Create your views here.
-import cjson
+import ujson
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -11,7 +11,7 @@ VERSION = "2"
 
 def version(request):
     message = VERSION
-    return JSONResponse(cjson.encode({
+    return JSONResponse(ujson.dumps({
         'status':'SUCCESS',
         'code':200, 
         'message': message}))

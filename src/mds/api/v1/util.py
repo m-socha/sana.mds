@@ -7,7 +7,7 @@
 import os, sys, traceback
 import time
 import logging
-import cjson
+import ujson
 
 from django.conf import settings
 

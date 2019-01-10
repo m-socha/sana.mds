@@ -5,7 +5,7 @@
 """
 from __future__ import with_statement
 import os, sys, traceback
-import cjson
+import ujson
 import datetime
 import logging
 from collections import defaultdict
@@ -111,7 +111,7 @@ def register_saved_procedure(sp_guid, procedure_guid, responses,
     # Read through responses and create BinaryResources if type is in
     # BINARY_TYPES above
     try:
-        responses_dict = cjson.decode(responses,True)
+        responses_dict = ujson.loads(responses,True)
         for k,v in responses_dict.items():
             if settings.DEBUG:
                 logging.debug("%s : %s" % (k,v))
@@ -202,7 +202,7 @@ def maybe_upload_procedure(saved_procedure):
     savedprocedure_guid = saved_procedure.guid
 
     # decodes and cleans up responses-OpenMRS specific
-    responses = cjson.decode(saved_procedure.responses,True)
+    responses = ujson.loads(saved_procedure.responses,True)
     cleaned_responses = []
     patient_id = ""
     patient_first = ""

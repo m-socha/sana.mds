@@ -1,7 +1,7 @@
 """
 """
 
-import cjson
+import ujson
 from django.conf import settings
 from django.contrib.auth import authenticate
 from piston.authentication import HttpBasicAuthentication
@@ -67,7 +67,7 @@ class BasicOrSessionAuth(HttpBasicAuthentication):
                 "code": 401,
                 "message" : [], 
                 "errors":["Authorization Required",]}
-        resp = HttpResponse(cjson.encode(msg))
+        resp = HttpResponse(ujson.dumps(msg))
         resp['WWW-Authenticate'] = 'Basic realm="%s"' % self.realm
         resp.status_code = 401
         return resp

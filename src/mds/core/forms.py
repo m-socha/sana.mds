@@ -35,41 +35,48 @@ class ConceptForm(forms.ModelForm):
     """
     class Meta:
         model = Concept
+        fields = "__all__"
 
 class RelationshipForm(forms.ModelForm):
     """ A simple concept relationship form 
     """
     class Meta:
         model = Relationship
+        fields = "__all__"
 
 class RelationshipCategoryForm(forms.ModelForm):
     """ A simple concept relationship category form 
     """
     class Meta:
         model = RelationshipCategory
+        fields = "__all__"
 
 class DeviceForm(forms.ModelForm):
     """ A simple Client form
     """
     class Meta:
         model = Device
+        fields = "__all__"
 
 class EncounterForm(forms.ModelForm):
     """ A simple encounter form.
     """
     class Meta:
         model = Encounter
+        fields = "__all__"
 
 class EventForm(forms.ModelForm):
     """ A simple event form
     """
     class Meta:
         model = Event
+        fields = "__all__"
 
 class NotificationForm(forms.ModelForm):
     """ Form for sending notifications """
     class Meta:
         model = Notification
+        fields = "__all__"
 
 class ObservationForm(forms.ModelForm):
     """ A simple observation form """
@@ -81,6 +88,7 @@ class ObserverForm(forms.ModelForm):
     """ A simple observation form """
     class Meta:
         model = Observer
+        fields = "__all__"
 
 class ProcedureForm(forms.ModelForm):
     """ A simple procedure form
@@ -89,6 +97,7 @@ class ProcedureForm(forms.ModelForm):
     
     class Meta:
         model = Procedure
+        fields = "__all__"
 
 class ProcedureGroupForm(forms.ModelForm):
     """ A simple procedure group form
@@ -99,9 +108,10 @@ class ProcedureGroupForm(forms.ModelForm):
         widgets = {
             'procedures': forms.CheckboxSelectMultiple 
         }
-        
+
 class SubjectForm(forms.ModelForm):
     """ A simple patient form
     """
     class Meta:
         model = Subject
+        fields = "__all__"

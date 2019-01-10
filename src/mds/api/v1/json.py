@@ -27,7 +27,7 @@ except ImportError, e:
     import simplejson
 import sys, traceback
 import logging
-import cjson
+import ujson
 import urllib2
 import telnetlib
 import urllib
@@ -543,7 +543,7 @@ def email_notification_submit(request):
     response = fail('Failed to register email notification.')
 
     try:
-        emailAddresses = cjson.decode(addresses)
+        emailAddresses = ujson.loads(addresses)
     except Exception, e:
         response = fail('Got error when trying to parse email addresses.')
 
@@ -732,15 +732,15 @@ def syc_encounters(request, patient_id, encounters=None):
     for encounter in encounters:
         answerMap = ''
         response = {}
-        responses = cjson.decode(encounter.responses,True)
+        responses = ujson.loads(encounter.responses,True)
         
         for eid, attr in responses.items():
             response[eid] = attr.get('answer')
-        answerMap = cjson.encode(response)
+        answerMap = ujson.dumps(response)
         cleaned_encounters[encounter.encounter] = response
         procedure_guids += ('%s#' % encounter.procedure_guid)
     
-    data = cjson.encode(cleaned_encounters)
+    data = ujson.dumps(cleaned_encounters)
     logging.info(data)
     logging.info(procedure_guids)
     logging.info("Returning encounters")

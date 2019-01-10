@@ -4,7 +4,7 @@ Created on Feb 29, 2012
 :Authors: Sana dev team
 :Version: 2.0
 """
-import cjson
+import ujson
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -59,10 +59,10 @@ class RequestLog(models.Model):
     timestamp = property(fset=settimestamp, fget=gettimestamp)
     
     def getmessage(self):
-        return cjson.decode(self.messages)
+        return ujson.loads(self.messages)
     
     def setmessage(self, value):
-        self.level = cjson.encode(value, True)
+        self.level = ujson.dumps(value, True)
         
     message = property(fget=getmessage, fset=setmessage)
         

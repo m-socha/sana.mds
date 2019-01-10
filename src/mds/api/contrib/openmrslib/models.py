@@ -60,7 +60,7 @@ VisitType
 Source: https://wiki.openmrs.org/display/docs/REST+Web+Service+Resources+in+OpenMRS+1.9
 '''
 import datetime
-import cjson
+import ujson
 
 from django.conf import settings
 from django.contrib.auth.models import User

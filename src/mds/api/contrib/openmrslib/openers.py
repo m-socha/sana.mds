@@ -6,7 +6,7 @@
 import urllib
 import cookielib
 import urllib2
-import cjson
+import ujson
 import re  
 import base64
 import logging
@@ -101,7 +101,7 @@ class OpenMRSOpener(AbstractHandler):
            currently only supports basic auth.
         """
         # if class has no "sessions" attr bail
-        skeys = getattr(self.__class__, "sessions". None)
+        skeys = getattr(self.__class__, "sessions", None)
         if not skeys:
             return None, None
         

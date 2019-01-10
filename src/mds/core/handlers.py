@@ -5,7 +5,7 @@ Created on Feb 29, 2012
 :Version: 2.0
 '''
 import logging
-import cjson
+import ujson
 
 from django.conf import settings
 from django.contrib.auth import authenticate
@@ -60,7 +60,7 @@ class SessionHandler(DispatchingHandler):
             logging.debug("is_json: %s" % is_json)
             if is_json:
                 raw_data = request.read()
-                data = cjson.decode(raw_data)
+                data = ujson.loads(raw_data)
             else:
                 data = self.flatten_dict(request.POST)
             

@@ -7,7 +7,7 @@ import urllib
 import cookielib
 import logging
 import urllib2
-import cjson
+import ujson
 import time
 import base64
 
@@ -49,7 +49,7 @@ def item_reader(response, all_unicode=False):
     pass
 
 def rest_reader(response, all_unicode=False):
-    msg = cjson.decode(response.read(), all_unicode=all_unicode)
+    msg = ujson.loads(response.read(), all_unicode=all_unicode)
     if ERROR_CONTENT in msg.keys():
         return error_reader(msg)
     elif LIST_CONTENT in msg.keys():
@@ -102,7 +102,7 @@ def patient_form(first_name, last_name, patient_id, gender, birthdate):
 
 
 def patient_reader(response, all_unicode=False):
-    msg = cjson.decode(response.read(), all_unicode=all_unicode)
+    msg = ujson.loads(response.read(), all_unicode=all_unicode)
     if ERROR_CONTENT in msg.keys():
         return error_reader(msg)
     else:
@@ -235,7 +235,7 @@ class OpenMRS(openers.OpenMRSOpener):
         req = urllib2.Request(url)
         req.add_header("jsessionid", jsessionid)
         if kwargs:
-            data = cjson.encode(kwargs) if use_json else urllib.urlencode(kwargs)
+            data = ujson.dumps(kwargs) if use_json else urllib.urlencode(kwargs)
             req.add_data(data)
         logging.debug("Request: %s" % req.get_full_url())
         logging.debug("...headers: %s" % req.header_items())
@@ -259,7 +259,7 @@ class OpenMRS(openers.OpenMRSOpener):
         if username and password:
             req.add_header("Authorization", "Basic %s" % basic64(username, password))
         #session = urllib2.urlopen(req)
-        session = cjson.decode(opener.open(req).read())
+        session = ujson.loads(opener.open(req).read())
         return opener, session
     
     def getPatient(self,username, password, patientid):
@@ -293,7 +293,7 @@ class OpenMRS(openers.OpenMRSOpener):
         logging.debug(response)
         content = []
         for uri in response:
-            person = cjson.decode(self.open(uri+"?v=full", username, password).read())
+            person = ujson.loads(self.open(uri+"?v=full", username, password).read())
             print person
             patient = {}
             name = person["names"]
@@ -387,7 +387,7 @@ class OpenMRS(openers.OpenMRSOpener):
             url = "%smoduleServlet/sana/permissionsServlet" % self.host
             response = opener.open(url).read()
             logging.debug("Got result %s" % response)
-            resp_msg = cjson.decode(response,True)
+            resp_msg = ujson.loads(response,True)
             message = resp_msg['message']
             hasPermissions = True if resp_msg['status'] == 'OK' else False
             if not hasPermissions:
@@ -399,7 +399,7 @@ class OpenMRS(openers.OpenMRSOpener):
                          procedure_title, saved_procedure_id,
                          responses)
             
-            description = cjson.encode(description)
+            description = ujson.dumps(description)
             post = {'description': str(description)}
             logging.debug("Encoded parameters, checking files.")
             # Attach a file 
@@ -421,7 +421,7 @@ class OpenMRS(openers.OpenMRSOpener):
                 use_json=False, **post).read()
             logging.debug("Got result %s" % response)
                 
-            resp_msg = cjson.decode(response,True)
+            resp_msg = ujson.loads(response,True)
             message = resp_msg.get('message', '')
             result = True if resp_msg['status'] == 'OK' else False
             encounter = resp_msg.get('encounter', None)
