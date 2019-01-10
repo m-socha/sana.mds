@@ -550,6 +550,7 @@ class ModelFormMixin(object):
     template_name = "web/form.html"
     default_sort_params = ('created', 'asc')
     exclude = ()
+    fields = '__all__'
     _fields = []
     success_url_format = "/{app}/{model}/%(id)s/"
     app = 'mds.web'
