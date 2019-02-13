@@ -7,7 +7,9 @@
 from django.db import models
 
 from mds.api.utils import make_uuid
+from django.utils.encoding import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 class Procedure(models.Model):
     """ A series of steps used to collect data observations. """
 
@@ -39,6 +41,6 @@ class Procedure(models.Model):
 
     voided = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s %s" % (self.title, self.version)
 

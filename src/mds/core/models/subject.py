@@ -7,6 +7,7 @@ import datetime
 import os
 from PIL import Image
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from mds.api.utils import make_uuid
 
 __all__ = ["AbstractSubject","Subject"]
@@ -27,6 +28,7 @@ class AbstractSubject(models.Model):
     
     voided = models.BooleanField(default=False)
 
+@python_2_unicode_compatible
 class Subject(AbstractSubject): 
     """ Simple subject implementation as a medical patient. 
     """
@@ -91,5 +93,5 @@ class Subject(AbstractSubject):
         super(Subject, self).save(*args, **kwargs)
         self._generate_thumb()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s, %s - %s' % (self.family_name, self.given_name, self.system_id)

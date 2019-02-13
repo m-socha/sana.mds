@@ -8,6 +8,7 @@ import ujson
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
 from mds.api import NOTSET, LEVEL_CHOICES
 from mds.api.utils import make_uuid
@@ -16,6 +17,8 @@ from mds.api.utils import make_uuid
 TIME_FORMAT = "%m/%d/%Y %H:%M:%S"
 
 _app = "core"
+
+@python_2_unicode_compatible
 class RequestLog(models.Model):
     """
     Logging facility for requests.
@@ -66,7 +69,7 @@ class RequestLog(models.Model):
         
     message = property(fget=getmessage, fset=setmessage)
         
-    def __unicode__(self):
+    def __str__(self):
         """ Default output """
         return _("%6s%12s%12s%s" % (self.level, self.device, self.domain, 
                     self.timestamp.strftime(settings.TIME_FORMAT)))

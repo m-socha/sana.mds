@@ -5,9 +5,10 @@
 """
 
 from django.db import models
-
+from django.utils.encoding import python_2_unicode_compatible
 from mds.api.utils import make_uuid
 
+@python_2_unicode_compatible
 class Device(models.Model):
     """ The entity which is used to collect the data """
     
@@ -28,5 +29,5 @@ class Device(models.Model):
 
     voided = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
