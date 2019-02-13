@@ -470,7 +470,7 @@ class ModelListMixin(SortMixin):
         super(ModelListMixin,self)
         self._fields = self.field_names()
         if not hasattr(self,'form'):
-            self.form = modelform_factory(self.model)
+            self.form = modelform_factory(self.model, fields='__all__')
         if not hasattr(self,'exclude'):
             self.exclude = ()
 
@@ -549,6 +549,7 @@ class ModelFormMixin(object):
     template_name = "web/form.html"
     default_sort_params = ('created', 'asc')
     exclude = ()
+    fields = '__all__'
     _fields = []
     success_url_format = "/{app}/{model}/%(id)s/"
     app = 'mds.web'
@@ -559,7 +560,7 @@ class ModelFormMixin(object):
         #    self.fields = self.get_default_model_fields()
         self._fields = self.field_names()
         if not hasattr(self,'form'):
-            self.form = modelform_factory(self.model)
+            self.form = modelform_factory(self.model, fields='__all__')
         if not hasattr(self,'exclude'):
             self.exclude = ()
         _model = getattr(self,"model").__name__.lower()
