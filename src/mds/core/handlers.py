@@ -251,6 +251,21 @@ class ProcedureGroupHandler(DispatchingHandler):
         "created",
         "voided",
     )
+    def read(self, request, uuid=None):
+        result_set = ProcedureGroup.objects.all()
+        if uuid:
+            result_set = result_set.filter(uuid=uuid)
+        author_filter = request.GET.get('author', None)
+        if author_filter:
+            result_set = result_set.filter(author=author_filter)
+        title_filter = request.GET.get('title', None)
+        if title_filter:
+            result_set = result_set.filter(title=title_filter)
+        if not result_set and uuid:
+            return fail('Could not find procedure group with given uuid')
+        elif uuid:
+            result_set = result_set[0]
+        return succeed(result_set)
     signals = { LOGGER:( EventSignal(), EventSignalHandler(Event))}
 
         
