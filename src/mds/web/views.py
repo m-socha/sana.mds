@@ -42,7 +42,7 @@ def login(request,*args,**kwargs):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
-        redirect_to = request.REQUEST.get("next", '')
+        redirect_to = request.POST.get('next', '')
         next_page = redirect_to if redirect_to else reverse("web:portal")
         if user is None:
             return TemplateResponse(request,
@@ -61,6 +61,7 @@ def login(request,*args,**kwargs):
             'web/login.html',
             {
                 'form': LoginForm(),
+                'next': request.REQUEST.get('next', '')
             })
 
 def logout(request):
@@ -691,16 +692,21 @@ class ModelSuccessMixin(SuccessMessageMixin):
             'uuid' : self.object.uuid
             }
         return self.success_message % (data)
-
+        
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view, login_url='web:login')
 # Concepts
-class UserListView(ModelListMixin, ListView):
+class UserListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = User
     template_name = "web/list.html"
     fields = ('username','last_name','first_name',)
     paginate_by=10
     default_sort_params = ('username','last_name',)
 
-class UserCreateView(SuccessMessageMixin,CreateView):
+class UserCreateView(LoginRequiredMixin, SuccessMessageMixin,CreateView):
     model = User
     template_name = "web/form_user_new.html"
     form_class = UserForm
@@ -715,7 +721,7 @@ class UserCreateView(SuccessMessageMixin,CreateView):
         context['portal'] = portal_site
         return context
 
-class UserUpdateView(ModelFormMixin, SuccessMessageMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, ModelFormMixin, SuccessMessageMixin, UpdateView):
     model = User
     template_name = 'web/form_user.html'
     form_class = UserForm
@@ -725,7 +731,7 @@ class UserUpdateView(ModelFormMixin, SuccessMessageMixin, UpdateView):
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(cleaned_data)
 
-class UserDetailView(ModelFormMixin,DetailView):
+class UserDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = User
     template_name = 'web/detail.html'
     context_object_name = 'user'
@@ -733,17 +739,17 @@ class UserDetailView(ModelFormMixin,DetailView):
     fields = ('username','last_name','first_name','email')
 
 # Concepts
-class ConceptListView(ModelListMixin, ListView):
+class ConceptListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = Concept
     template_name = "web/list.html"
     fields = ('created', 'name', 'description', 'voided')
     paginate_by=10
 
-class ConceptCreateView(ModelFormMixin,SuccessMessageMixin,CreateView):
+class ConceptCreateView(LoginRequiredMixin, ModelFormMixin,SuccessMessageMixin,CreateView):
     model = Concept
     template_name = "web/form_new.html"
 
-class ConceptUpdateView(ModelFormMixin, SuccessMessageMixin, UpdateView):
+class ConceptUpdateView(LoginRequiredMixin, ModelFormMixin, SuccessMessageMixin, UpdateView):
     model = Concept
     template_name = 'web/form.html'
     success_message = _("Concept: %(name)s was updated successfully")
@@ -751,80 +757,80 @@ class ConceptUpdateView(ModelFormMixin, SuccessMessageMixin, UpdateView):
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(cleaned_data)
         
-class ConceptDetailView(ModelFormMixin,DetailView):
+class ConceptDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Concept
     template_name = 'web/detail.html'
     context_object_name = 'concept'
     slug_field = 'uuid'
 
 # Devices
-class DeviceListView(ModelListMixin, ListView):
+class DeviceListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = Device
     template_name = "web/list.html"
     fields = ('created','name','voided',)
     paginate_by=10
 
-class DeviceCreateView(ModelFormMixin,CreateView):
+class DeviceCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Device
     template_name = "web/form_new.html"
 
-class DeviceUpdateView(ModelFormMixin, UpdateView):
+class DeviceUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = Device
     template_name = 'web/form.html'
 
-class DeviceDetailView(ModelFormMixin, DetailView):
+class DeviceDetailView(LoginRequiredMixin, ModelFormMixin, DetailView):
     model = Device
     template_name = 'web/detail.html'
     context_object_name = 'device'
     slug_field = 'uuid'
 
 # Encounters
-class EncounterListView(ModelListMixin,ListView):
+class EncounterListView(LoginRequiredMixin, ModelListMixin,ListView):
     model = Encounter
     template_name = "web/list.html"
     fields = ('created', 'procedure', 'subject')
     paginate_by=10
     
-class EncounterCreateView(ModelFormMixin,CreateView):
+class EncounterCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Encounter
     template_name = "web/form_new.html"
 
-class EncounterUpdateView(ModelFormMixin, UpdateView):
+class EncounterUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = Encounter
     template_name = "web/form.html"
 
-class EncounterDetailView(ModelFormMixin,DetailView):
+class EncounterDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Encounter
     template_name = 'web/encounter_detail.html'
     context_object_name = 'encounter'
     slug_field = 'uuid'
 
 # Locations
-class LocationListView(ModelListMixin, ListView):
+class LocationListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = Location
     template_name = "web/list.html"
     paginate_by=10
     default_sort_params = ('name', 'asc')
     fields = ('name','code',)
     
-class LocationCreateView(ModelFormMixin,CreateView):
+class LocationCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Location
     template_name = "web/form_new.html"
     #success_url="/mds/web/location/%(id)s/"
     
-class LocationUpdateView(ModelFormMixin, UpdateView):
+class LocationUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = Location
     template_name = 'web/form.html'
     #success_url='/mds/web/location/%(id)s/'
     
-class LocationDetailView(ModelFormMixin,DetailView):
+class LocationDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Location
     template_name = 'web/detail.html'
     context_object_name = 'location'
     slug_field = 'uuid'
 
 # Observations
-class ObservationListView(ModelListMixin, ListView):
+class ObservationListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = Observation
     template_name = "web/list.html"
     paginate_by=10
@@ -837,42 +843,42 @@ class ObservationListView(ModelListMixin, ListView):
         'value_complex',
     )
 
-class ObservationCreateView(ModelFormMixin,CreateView):
+class ObservationCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Observation
     template_name = "web/form_new.html"
 
-class ObservationUpdateView(ModelFormMixin, ModelSuccessMixin, UpdateView):
+class ObservationUpdateView(LoginRequiredMixin, ModelFormMixin, ModelSuccessMixin, UpdateView):
     model = Observation
     template_name = 'web/form.html'
 
-class ObservationDetailView(ModelFormMixin,DetailView):
+class ObservationDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Observation
     template_name = 'web/detail.html'
     context_object_name = 'observation'
     slug_field = 'uuid'
 
 # Observers
-class ObserverListView(ModelListMixin, ListView):
+class ObserverListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = Observer
     template_name = "web/list.html"
     paginate_by=10
 
-class ObserverCreateView(ModelFormMixin,CreateView):
+class ObserverCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Observer
     template_name = "web/form_new.html"
     
-class ObserverUpdateView(ModelFormMixin, UpdateView):
+class ObserverUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = Observer
     template_name = 'web/form.html'
 
-class ObserverDetailView(ModelFormMixin,DetailView):
+class ObserverDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Observer
     template_name = 'web/detail.html'
     context_object_name = 'observer'
     slug_field = 'uuid'
 
 # Procedures
-class ProcedureListView(ModelListMixin, ListView):
+class ProcedureListView(LoginRequiredMixin, ModelListMixin, ListView):
     template_name = 'web/list.html'
     model = Procedure
     default_sort_params = ('title', 'asc')
@@ -880,22 +886,22 @@ class ProcedureListView(ModelListMixin, ListView):
     paginate_by=3
 
         
-class ProcedureDetailView(ModelFormMixin,DetailView):
+class ProcedureDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Procedure
     template_name = 'web/detail.html'
     context_object_name = 'procedure'
     slug_field = 'uuid'
     
-class ProcedureCreateView(ModelFormMixin,CreateView):
+class ProcedureCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Procedure
     template_name = "web/form_new.html"
 
-class ProcedureUpdateView(ModelFormMixin, UpdateView):
+class ProcedureUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = Procedure
     template_name = 'web/form.html'
     
 # Procedure Groups
-class ProcedureGroupListView(ModelListMixin, ListView):
+class ProcedureGroupListView(LoginRequiredMixin, ModelListMixin, ListView):
     template_name = 'web/list.html'
     title = 'Procedure Group List'
     model = ProcedureGroup
@@ -903,64 +909,64 @@ class ProcedureGroupListView(ModelListMixin, ListView):
     fields = ('title', 'author')#,'uuid')
     paginate_by=3
   
-class ProcedureGroupDetailView(ModelFormMixin,DetailView):
+class ProcedureGroupDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = ProcedureGroup
     template_name = 'web/detail.html'
     context_object_name = 'proceduregroup'
     slug_field = 'uuid'
     fields = ('uuid', 'created', 'modified', 'title', 'author', 'description', 'procedures', 'voided')
     
-class ProcedureGroupCreateView(ModelFormMixin, CreateView):
+class ProcedureGroupCreateView(LoginRequiredMixin, ModelFormMixin, CreateView):
     model = ProcedureGroup
     template_name = "web/form_new.html"
     form_class = ProcedureGroupForm
     fields = None
 
-class ProcedureGroupUpdateView(ModelFormMixin, UpdateView):
+class ProcedureGroupUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = ProcedureGroup
     template_name = 'web/form.html'
     form_class = ProcedureGroupForm
     fields = None
 
-class SubjectListView(ModelListMixin, ListView):
+class SubjectListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = Subject
     default_sort_params = ('system_id', 'asc')
     fields = ('created', 'system_id', 'family_name', 'given_name', 'gender', 'dob','voided')
     template_name = "web/list.html"
     paginate_by=10
 
-class SubjectCreateView(ModelFormMixin,CreateView):
+class SubjectCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = Subject
     template_name = "web/form_new.html"
 
-class SubjectUpdateView(ModelFormMixin, UpdateView):
+class SubjectUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = Subject
     template_name = 'web/form.html'
 
-class SubjectDetailView(ModelFormMixin,DetailView):
+class SubjectDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = Subject
     template_name = 'web/detail.html'
     context_object_name = 'subject'
     slug_field = 'uuid'
 
-class EncounterTaskListView(ModelListMixin, ListView):
+class EncounterTaskListView(LoginRequiredMixin, ModelListMixin, ListView):
     model = EncounterTask
     default_sort_params = ('due_on', 'asc')
     fields = ('due_on', 'subject')
     template_name = "web/list.html"
     paginate_by=10
 
-class EncounterTaskCreateView(ModelFormMixin,CreateView):
+class EncounterTaskCreateView(LoginRequiredMixin, ModelFormMixin,CreateView):
     model = EncounterTask
     template_name = "web/form_new.html"
     form_class = EncounterTaskForm
 
-class EncounterTaskUpdateView(ModelFormMixin, UpdateView):
+class EncounterTaskUpdateView(LoginRequiredMixin, ModelFormMixin, UpdateView):
     model = EncounterTask
     template_name = 'web/form.html'
     form_class = EncounterTaskForm
 
-class EncounterTaskDetailView(ModelFormMixin,DetailView):
+class EncounterTaskDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
     model = EncounterTask
     template_name = 'web/detail.html'
     context_object_name = 'encountertask'
