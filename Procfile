@@ -1,1 +1,1 @@
-web: python ./src/manage.py collectstatic --noinput && gunicorn --chdir=./src mds.wsgi --log-file -
+web: gunicorn --chdir=./src mds.wsgi --log-file -
