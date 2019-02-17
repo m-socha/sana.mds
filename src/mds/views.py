@@ -1,4 +1,4 @@
-import cjson
+import ujson
 import logging
 import platform
 
@@ -50,6 +50,6 @@ def home(request):
     }
     accept = request.META.get('HTTP_ACCEPT',None)
     if 'application/json' in request.META.get('HTTP_ACCEPT'):
-        return HttpResponse(cjson.encode(data))
+        return HttpResponse(ujson.dumps(data))
     else:
         return render_to_response('index.html', RequestContext(request,data))

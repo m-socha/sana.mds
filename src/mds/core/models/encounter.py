@@ -7,14 +7,16 @@ on a Subject.
 
 from django.db import models
 from mds.api.utils import make_uuid
+from django.utils.encoding import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 class Encounter(models.Model):
     """ A completed procedure, where data has been collected
     """
     class Meta:
         app_label = "core"
                    
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % (self.uuid)
     
     uuid = models.SlugField(max_length=36, unique=True, default=make_uuid, editable=False)
@@ -69,7 +71,7 @@ class Encounter(models.Model):
     def get_absolute_url(self):
     	return ( 'core:encounter', { self.uuid : self.uuid } )
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{procedure} - {subject}'.format(
             procedure=self.procedure,
             subject=self.subject)

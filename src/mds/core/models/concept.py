@@ -6,16 +6,17 @@
 
 from django.conf import settings
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
 from mds.api.utils import make_uuid
-
+@python_2_unicode_compatible
 class Concept(models.Model):
     """ A unit of knowledge."""
     
     class Meta:
         app_label = "core"
         
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     
     uuid = models.SlugField(max_length=36, unique=True, default=make_uuid, editable=False)
@@ -76,14 +77,15 @@ class Concept(models.Model):
         return self.related_to.filter(        
             from_concept__category=category,         
             from_concept__to_concept=self)
-
+            
+@python_2_unicode_compatible
 class RelationshipCategory(models.Model):
     """ A type of relationship between two concepts 
     """
     class Meta:
         app_label = "core"
         
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     
     uuid = models.SlugField(max_length=36, unique=True, default=make_uuid, editable=False)
@@ -99,6 +101,7 @@ class RelationshipCategory(models.Model):
     description = models.CharField(max_length=512, blank=True)
     restriction = models.CharField(max_length=512, blank=True)
 
+@python_2_unicode_compatible
 class Relationship(models.Model):
     """ A relationship between two concept instances 
     """
@@ -120,7 +123,7 @@ class Relationship(models.Model):
                             to_field='uuid')
     category = models.ForeignKey('RelationshipCategory')
     
-    def __unicode__(self):
+    def __str__(self):
         return u'{to} {relationship} {from}'.format(self.to_concept.name, 
                                                     self.from_conept.name, 
                                                     self.category.name)

@@ -48,9 +48,11 @@ then uploads it to the W3C validator.
 #-------------------------------------------------------------------------------
 
 import sys
+import re
+import random
 import urllib
 import urllib2
-import mimetools, mimetypes
+import mimetypes
 import os, stat
 from cStringIO import StringIO
 
@@ -101,10 +103,25 @@ class MultipartPostHandler(urllib2.BaseHandler):
             request.add_data(data)
         return request
 
-    
+    def _make_boundary(text=None):
+        # Craft a random boundary.  If text is given, ensure that the chosen
+        # boundary doesn't appear in the text.
+        token = random.randrange(sys.maxint)
+        boundary = ('=' * 15) + (_fmt % token) + '=='
+        if text is None:
+            return boundary
+        b = boundary
+        counter = 0
+        while True:
+            cre = re.compile('^--' + re.escape(b) + '(--)?$', re.MULTILINE)
+            if not cre.search(text):
+                break
+            b = boundary + '.' + str(counter)
+            counter += 1
+        return b
     def multipart_encode(self,vars, files, boundary = None, buffer = None):
         if boundary is None:
-            boundary = mimetools.choose_boundary()
+            boundary = self._make_boundary()
         if buffer is None:
             buffer = ''
         for(key, value) in vars:
@@ -128,7 +145,7 @@ class MultipartPostHandler(urllib2.BaseHandler):
     
     def multipart_encode2(self,vars, files, boundary = None, buf = None):
         if boundary is None:
-            boundary = mimetools.choose_boundary()
+            boundary = self._make_boundary()
         if buf is None:
             buf = StringIO()
         for(key, value) in vars:

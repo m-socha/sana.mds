@@ -1,0 +1,9 @@
+ujson
+django==1.8
+django-piston3
+lxml
+django-extensions
+django-extra-views
+Pillow           
+gunicorn
+django-heroku

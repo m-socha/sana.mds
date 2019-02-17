@@ -8,11 +8,12 @@ import mimetypes, os
 
 from django.db import models
 from django.utils.translation import ugettext as _
-
+from django.utils.encoding import python_2_unicode_compatible
 from mds.api.utils import make_uuid, guess_fext
 
 _app = "core"
 
+@python_2_unicode_compatible
 class Observation(models.Model):
     """ A piece of data collected about a subject during an external_id"""
 
@@ -21,7 +22,7 @@ class Observation(models.Model):
         unique_together = (('encounter', 'node'),)
         ordering = ["-created"]
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s %s" % ( 
             self.concept.name,
             unicode(self.value), 

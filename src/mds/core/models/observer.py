@@ -6,10 +6,11 @@ The observation model for the Sana data engine.
 """
 
 from django.db import models
-
+from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.auth.models import User
 from mds.api.utils import make_uuid
 
+@python_2_unicode_compatible
 class Observer(models.Model):
     """ The user who executes the Procedure and collects the Observations """
 
@@ -30,5 +31,5 @@ class Observer(models.Model):
 
     voided = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return unicode(self.user)

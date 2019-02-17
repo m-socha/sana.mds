@@ -1,6 +1,6 @@
 '''
 '''
-import cjson
+import ujson
 
 class OpenMRSRESTException(Exception):
     pass
@@ -77,7 +77,7 @@ def decode(response, result_decoder=None):
         if 'result_decoder is specified, it will be used to decode 
         any 'results'.
     '''
-    response_dict = cjson.decode(response)
+    response_dict = ujson.loads(response)
     result = RESTResponse(response_dict, decoder=result_decoder)
     if result.has_error():
         raise OpenMRSRestException(result.error)

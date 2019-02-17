@@ -4,10 +4,11 @@ Created on Feb 29, 2012
 :Authors: Sana dev team
 :Version: 2.0
 """
-import cjson
+import ujson
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
 from mds.api import NOTSET, LEVEL_CHOICES
 from mds.api.utils import make_uuid
@@ -15,6 +16,7 @@ from mds.api.utils import make_uuid
 # TODO read this from the config
 TIME_FORMAT = "%m/%d/%Y %H:%M:%S"
 
+@python_2_unicode_compatible
 class Event(models.Model):
     """
     Logging facility for requests.
@@ -58,16 +60,16 @@ class Event(models.Model):
     
     def getmessage(self):
         try:
-            return cjson.decode(self.messages)
+            return ujson.loads(self.messages)
         except:
             return self.messages
         
     def setmessage(self, value):
-        self.level = cjson.encode(value, True)
+        self.level = ujson.dumps(value, True)
         
     message = property(fget=getmessage, fset=setmessage)
         
-    def __unicode__(self):
+    def __str__(self):
         """ Default output """
         return "%6s%12s%12s%s" % (self.level, self.client, self.path, 
                     self.timestamp.strftime(settings.TIME_FORMAT))

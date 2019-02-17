@@ -5,7 +5,7 @@ Created on Aug 9, 2012
 :version: 2.0
 '''
 import logging
-import cjson
+import ujson
 
 from . import LOGGING_ENABLED, LOG_SIGNAL, SIGNALS, LOGGER, CRUD, crud
 from .responses import error, fail
@@ -117,7 +117,7 @@ def validate(operation='POST'):
             content_type = request.META.get('CONTENT_TYPE', None)
             is_json = 'json' in content_type
             if is_json:
-                data = cjson.decode(request.read())
+                data = ujson.loads(request.read())
             else:
                 data = handler.flatten_dict(getattr(request, operation))
             form = v_form(data=data,files=request.FILES) if request.FILES else v_form(data=data)

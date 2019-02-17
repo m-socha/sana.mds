@@ -4,7 +4,7 @@
 """
 import logging
 import time
-import cjson
+import ujson
 from django.core.urlresolvers import resolve
 
 from mds.api import LOGGING_ENABLED, LOGGING_START, LOG_SIGNAL, NOTSET, LOG_LEVELS, ERROR, LEVEL_CHOICES
@@ -66,7 +66,7 @@ class LoggingMiddleware(object):
         log = { 'client': request.META['REMOTE_ADDR'],
                 'path':request.path,
                 'name':resolver.url_name,
-                'messages': cjson.encode(records),
+                'messages': ujson.dumps(records),
                 'created':start, 
                 'duration':time_taken,
                 'level':level}

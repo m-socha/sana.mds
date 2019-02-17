@@ -7,7 +7,9 @@
 
 from django.db import models
 from mds.api.utils import make_uuid
+from django.utils.encoding import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 class Location(models.Model):
     
     class Meta:
@@ -21,5 +23,5 @@ class Location(models.Model):
     
     code = models.IntegerField(blank=True)
     
-    def __unicode__(self):
+    def __str__(self):
         return u'%s - %s' % (self.code,self.name)

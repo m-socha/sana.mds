@@ -4,7 +4,7 @@ Notifications for the Sana data engine.
 :Authors: Sana dev team
 :Version: 2.0
 """
-import cjson
+import ujson
 
 from django.db import models
 from mds.api.utils import make_uuid
@@ -44,4 +44,4 @@ class Notification(models.Model):
                'message': self.message,}
         for k,v in kwargs.iteritems():
             msg[k] = v
-        return cjson.encode(msg)
+        return ujson.dumps(msg)

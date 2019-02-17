@@ -7,7 +7,7 @@ import urllib
 import cookielib
 import logging
 import urllib2
-import cjson
+import ujson
 import time
 
 from django.conf import settings
@@ -304,7 +304,7 @@ class OpenMRS(object):
             url = "%smoduleServlet/moca/permissionsServlet" % self.url
             response = self.opener.open(url).read()
             logging.debug("Got result %s" % response)
-            resp_msg = cjson.decode(response,True)
+            resp_msg = ujson.loads(response,True)
             message = resp_msg['message']
             hasPermissions = True if resp_msg['status'] == 'OK' else False
             if not hasPermissions:
@@ -320,7 +320,7 @@ class OpenMRS(object):
                            'caseIdentifier': str(saved_procedure_id),
                            'questions': responses}
             
-            description = cjson.encode(description)
+            description = ujson.dumps(description)
             post = {'description': str(description)}
             logging.debug("Encoded parameters, checking files.")
             # Attach a file 
@@ -339,7 +339,7 @@ class OpenMRS(object):
             response = self.opener.open(url, post).read()
             logging.debug("Got result %s" % response)
                 
-            resp_msg = cjson.decode(response,True)
+            resp_msg = ujson.loads(response,True)
             message = resp_msg.get('message', '')
             result = True if resp_msg['status'] == 'OK' else False
             encounter = resp_msg.get('encounter', None)
@@ -352,7 +352,7 @@ class OpenMRS(object):
         return result, message, encounter
 
 def generateJSONDescriptionFromDict(responses, patientId, phoneId, procedureId):
-    return cjson.encode(
+    return ujson.dumps(
         {'phoneId': str(phoneId),
          'patientId': str(patientId),
          'procedureId': str(procedureId),
