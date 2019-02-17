@@ -6,7 +6,7 @@ Created on Aug 11, 2012
 '''
 from django.http import JsonResponse, HttpResponse
 from django.core import serializers
-from django.utils import simplejson as json
+import json
 import sys,traceback
 import collections
 import ujson
