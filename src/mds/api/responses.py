@@ -65,7 +65,7 @@ def fail(data, code=404, errors=[]):
                 'code' : code,
                 'message': data,
                 'errors': errors, }
-    return HttpResponse(ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
+    return HttpResponse(content=ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
@@ -83,7 +83,7 @@ def succeed(data, code=200):
     response = {'status': 'SUCCESS',
                'code' : code,
                'message': data, }
-    return HttpResponse(ujson.dumps(response), status=code)
+    return HttpResponse(content=ujson.dumps({'test':'test'}), content_type="application/json", status=code)
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
@@ -91,7 +91,7 @@ def error(exception):
                 'code' : 500,
                 'message': None,
                 'errors': errors, }
-    return HttpResponse(ujson.dumps(response), status=500, content_type="application/json; charset=utf-8")
+    return HttpResponse(content=ujson.dumps(response), status=500, content_type="application/json; charset=utf-8")
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
