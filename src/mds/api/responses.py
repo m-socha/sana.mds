@@ -91,7 +91,7 @@ def succeed(data, code=200):
         data = ujson.loads(data)[0]
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': ujson.loads(data), }
+              'message': data, }
        
     return HttpResponse(content=json.dumps(response), status=500, content_type="application/json; charset=utf-8")
 
