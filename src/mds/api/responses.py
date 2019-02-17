@@ -8,6 +8,7 @@ from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 import sys,traceback
 import collections
+import ujson
 
 def render_json_response(data):
     return JSONResponse(data)
@@ -64,7 +65,7 @@ def fail(data, code=404, errors=[]):
                 'code' : code,
                 'message': data,
                 'errors': errors, }
-    return JsonResponse(response, status=code)
+    return HttpResponse(ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
@@ -79,10 +80,10 @@ def succeed(data, code=200):
         msg.append(data)
     '''
     #msg = data if isinstance(data,collections.Iterable) else data
-    #response = {'status': 'SUCCESS',
-     #           'code' : code,
-      #          'message': data if isinstance(data, str) else serializers.serialize('json', data), }
-    return JsonResponse({'test':'test'}, status=code, safe=False)
+    response = {'status': 'SUCCESS',
+               'code' : code,
+               'message': data, }
+    return HttpResponse(ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
@@ -90,7 +91,7 @@ def error(exception):
                 'code' : 500,
                 'message': None,
                 'errors': errors, }
-    return JsonResponse(response, status=500)
+    return HttpResponse(ujson.dumps(response), status=500, content_type="application/json; charset=utf-8")
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
