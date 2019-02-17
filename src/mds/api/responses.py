@@ -6,6 +6,7 @@ Created on Aug 11, 2012
 '''
 from django.http import JsonResponse, HttpResponse
 from django.core import serializers
+from django.utils import simplejson as json
 import sys,traceback
 import collections
 import ujson
@@ -83,8 +84,7 @@ def succeed(data, code=200):
     response = {'status': 'SUCCESS',
                'code' : code,
                'message': data, }
-    http_response = HttpResponse(status=code, content_type='application/json')
-    http_response.write(ujson.dumps(response))
+    http_response = HttpResponse(json.dumps(response), status=code, content_type='application/json')
     return http_response
 
 def error(exception):
