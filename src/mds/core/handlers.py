@@ -232,7 +232,7 @@ class ProcedureHandler(DispatchingHandler):
     
     def create(self,request, uuid=None, *args, **kwargs):
         if 'json' in request.META.get('CONTENT_TYPE', ''):
-            payload = cjson.decode(request.read())
+            payload = ujson.loads(request.read())
             # for now only support version, author, title, description
             valid_object = False
             supported_attributes = (
@@ -293,7 +293,7 @@ class ProcedureGroupHandler(DispatchingHandler):
         if 'json' not in request.META.get('CONTENT_TYPE', ''):
             return fail('Unexpected content type', 400)
         server_procedures = proceduregroup.procedures.all()
-        request_payload = cjson.decode(request.read())
+        request_payload = ujson.loads(request.read())
         server_procedures = server_procedures.filter(voided=False).values('title').annotate(max_version=Max('version'))
         procedure_titles = [procedure['title'] for procedure in server_procedures]
         # Get procedures with a newer version
