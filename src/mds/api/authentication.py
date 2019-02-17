@@ -4,7 +4,7 @@
 import ujson
 from django.conf import settings
 from django.contrib.auth import authenticate
-from piston.authentication import HttpBasicAuthentication
+from piston3.authentication import HttpBasicAuthentication
 
 class HttpBasicAuthentication2(object):
     """
@@ -53,7 +53,7 @@ class HttpBasicAuthentication2(object):
         return resp
 
     def __repr__(self):
-        return u'<HTTPBasic: realm=%s>' % self.realm
+        return '<HTTPBasic: realm=%s>' % self.realm
 
 class BasicOrSessionAuth(HttpBasicAuthentication):
     """ Authentication handler which accepts  session based or basic 

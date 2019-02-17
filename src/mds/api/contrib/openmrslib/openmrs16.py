@@ -3,10 +3,10 @@
 :Authors: Sana Dev Team
 :Version: 1.1
 """
-import urllib
-import cookielib
+import urllib.request, urllib.parse, urllib.error
+import http.cookiejar
 import logging
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import ujson
 import time
 
@@ -44,18 +44,18 @@ class OpenMRS(object):
         self.password = password
         self.url = host
 
-        self.cookies = cookielib.CookieJar()
+        self.cookies = http.cookiejar.CookieJar()
 
         try:
-            password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
             password_mgr.add_password(None, self.url, self.username, self.password)
-            auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-            self.opener = urllib2.build_opener(
+            auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+            self.opener = urllib.request.build_opener(
                 auth_handler,
-                urllib2.HTTPCookieProcessor(self.cookies),
+                urllib.request.HTTPCookieProcessor(self.cookies),
                 handlers.MultipartPostHandler)
-        except Exception, e:
-            print "Couldn't initialize openMRS interface, exception: " + str(e)
+        except Exception as e:
+            print("Couldn't initialize openMRS interface, exception: " + str(e))
 
     def wsdispatch(self, wsname, pargs={}, query=None, data=None, auth=None, 
                    response_handler=None):
@@ -75,7 +75,7 @@ class OpenMRS(object):
             try:
                 message = self.login(auth=auth)
                 response = succeed(message)
-            except Exception, e:
+            except Exception as e:
                 response = fail(str(e))
             return response
         elif wsname == "subject":
@@ -108,7 +108,7 @@ class OpenMRS(object):
             self.username = auth.get("username","")
             self.passsword = auth.get("password","")
             
-        loginParams = urllib.urlencode(
+        loginParams = urllib.parse.urlencode(
             {"uname": self.username,
              "pw": self.password,
              "redirect": "/openmrs",
@@ -119,9 +119,9 @@ class OpenMRS(object):
         logging.debug("Success: Validating with OpenMRS loginServlet")
         
         if response.geturl()==self.url + "index.htm":
-            return u"username and password validated!"
+            return "username and password validated!"
         else:
-            raise Exception(u"username and password combination incorrect!")
+            raise Exception("username and password combination incorrect!")
 
     def validate_credentials(self, username, password):
         """Validates OpenMRS authorization for a user by sending a POST request 
@@ -141,7 +141,7 @@ class OpenMRS(object):
             password
                 a valid password
         """
-        loginParams = urllib.urlencode(
+        loginParams = urllib.parse.urlencode(
                 {"uname": self.username,
                  "pw": self.password,
                  "redirect": "/openmrs",
@@ -149,9 +149,9 @@ class OpenMRS(object):
                  })
         result = self.opener.open("%sloginServlet" % self.url, loginParams)
         if result.geturl()==self.url + "index.htm":
-            return u"username and password validated!"
+            return "username and password validated!"
         else:
-            raise Exception(u"username and password combination incorrect!")
+            raise Exception("username and password combination incorrect!")
     
     def getPatient(self,username, password, userid):
         """Retrieves a patient by id from OpenMRS through the REST module.
@@ -169,15 +169,15 @@ class OpenMRS(object):
         """
         uri = self.url+'moduleServlet/restmodule/api/patient/'+userid
 
-        cookies = cookielib.CookieJar()
-        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        cookies = http.cookiejar.CookieJar()
+        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, uri, username, password)
-        auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib2.build_opener(auth_handler,
-                                      urllib2.HTTPCookieProcessor(cookies),
+        auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib.request.build_opener(auth_handler,
+                                      urllib.request.HTTPCookieProcessor(cookies),
                                       handlers.MultipartPostHandler)
-        urllib2.install_opener(opener)
-        rest = urllib2.urlopen(uri)
+        urllib.request.install_opener(opener)
+        rest = urllib.request.urlopen(uri)
         return rest.read()
     
     def getAllPatients(self,username, password, query=None):
@@ -195,14 +195,14 @@ class OpenMRS(object):
            
         """
         uri = self.url+'moduleServlet/restmodule/api/allPatients/'
-        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, uri, username, password)
-        auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib2.build_opener(auth_handler,
-                                      urllib2.HTTPCookieProcessor(self.cookies),
+        auth_handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib.request.build_opener(auth_handler,
+                                      urllib.request.HTTPCookieProcessor(self.cookies),
                                       handlers.MultipartPostHandler)
-        urllib2.install_opener(opener)
-        rest = urllib2.urlopen(uri)
+        urllib.request.install_opener(opener)
+        rest = urllib.request.urlopen(uri)
         return rest.read()
     
     def create_patient(self, patient_id, first_name, last_name, gender, 
@@ -248,7 +248,7 @@ class OpenMRS(object):
             url = "%sadmin/patients/newPatient.form" % self.url
             logging.info("Creating new patient %s" % patient_id)
             self.opener.open(url, parameters)
-        except Exception, e:
+        except Exception as e:
                 logging.info("Exception trying to create patient: %s" % str(e))
 
     
@@ -345,7 +345,7 @@ class OpenMRS(object):
             encounter = resp_msg.get('encounter', None)
             logging.debug("Done with upload")
             
-        except Exception, e:
+        except Exception as e:
             logging.error("Exception in uploading procedure: %s" 
                           % saved_procedure_id)
             raise

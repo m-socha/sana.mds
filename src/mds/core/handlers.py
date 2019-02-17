@@ -13,8 +13,8 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.db.models import Max, Q
 
-from piston.handler import BaseHandler
-from piston.resource import Resource
+from piston3.handler import BaseHandler
+from piston3.resource import Resource
 
 from mds.api import do_authenticate, LOGGER
 from mds.api.contrib import backends
@@ -103,7 +103,7 @@ class SessionHandler(DispatchingHandler):
                     return fail(msg)
         except Exception as e:
             msg = "Internal Server Error"
-            logging.error(unicode(e))
+            logging.error(str(e))
             logtb()
             return error(msg)
         
@@ -295,7 +295,7 @@ class ProcedureGroupHandler(DispatchingHandler):
         server_procedures = proceduregroup.procedures.all()
         request_payload = cjson.decode(request.read())
         server_procedures = server_procedures.filter(voided=False).values('title').annotate(max_version=Max('version'))
-        procedure_titles = map(lambda procedure: procedure['title'], server_procedures)
+        procedure_titles = [procedure['title'] for procedure in server_procedures]
         # Get procedures with a newer version
         procedures_to_update_clause = Q()
         request_procedures = request_payload.get('procedures', {})
@@ -306,12 +306,9 @@ class ProcedureGroupHandler(DispatchingHandler):
                 where_clause = (Q(title=server_procedure['title']) & Q(version=server_procedure['max_version']))
                 procedures_to_update_clause = procedures_to_update_clause | where_clause
         procedures_to_update = Procedure.objects.filter(procedures_to_update_clause) if len(procedures_to_update_clause) != 0 else []
-        updated_procedures = map( \
-            lambda procedure:{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read()}, \
-            procedures_to_update \
-        )
+        updated_procedures = [{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read()} for procedure in procedures_to_update]
         # Find procedures that don't exist in the group
-        unknown_request_procedures = filter(lambda request_procedure_title: request_procedure_title not in procedure_titles, request_procedures.keys())
+        unknown_request_procedures = [request_procedure_title for request_procedure_title in list(request_procedures.keys()) if request_procedure_title not in procedure_titles]
         return_payload = {'updated_procedures': updated_procedures, 'unknown_procedures': unknown_request_procedures}
         return succeed(return_payload)
         
@@ -389,7 +386,7 @@ class CompoundFormHandler(object):
     
     def create(request, *args, **kwargs):
         cleaned = {}
-        for k,v in getattr(self.__class__, "forms", {}).items():
+        for k,v in list(getattr(self.__class__, "forms", {}).items()):
             form = v(request.ITEMS[k])
             form.full_clean()
             cleaned[k] = form

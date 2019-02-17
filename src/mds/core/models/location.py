@@ -24,4 +24,4 @@ class Location(models.Model):
     code = models.IntegerField(blank=True)
     
     def __str__(self):
-        return u'%s - %s' % (self.code,self.name)
+        return '%s - %s' % (self.code,self.name)

@@ -59,7 +59,7 @@ class Subject(AbstractSubject):
 
     @property
     def full_name(self):
-        return u'%s, %s' % (self.family_name,self.given_name)
+        return '%s, %s' % (self.family_name,self.given_name)
 
     def _generate_thumb(self, size=(96,96)):
         try:
@@ -94,4 +94,4 @@ class Subject(AbstractSubject):
         self._generate_thumb()
 
     def __str__(self):
-        return u'%s, %s - %s' % (self.family_name, self.given_name, self.system_id)
+        return '%s, %s - %s' % (self.family_name, self.given_name, self.system_id)

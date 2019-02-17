@@ -22,15 +22,15 @@ to trace the log events per request: ::
 """
 
 try:
-    import json as simplejson
-except ImportError, e:
+    from . import json as simplejson
+except ImportError as e:
     import simplejson
 import sys, traceback
 import logging
 import ujson
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import telnetlib
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from xml.dom import minidom
 
 from django.conf import settings
@@ -79,7 +79,7 @@ def validate_credentials(request):
             response = succeed("username and password validated!")
         else:
             response = fail("username and password combination incorrect!")
-    except Exception, e:
+    except Exception as e:
         msg = '%s validate_credentials' % MSG_MDS_ERROR
         logging.error('%s %s' % (msg,str(e)))
         response = fail(msg)
@@ -119,11 +119,11 @@ def procedure_submit(request):
                 logging.error("Failed to register procedure: %s" % message)
         else:
             logging.error("Saved procedure submission was invalid, dumping REQUEST.")
-            for k,v in request.REQUEST.items():
+            for k,v in list(request.REQUEST.items()):
                 logging.error("SavedProcedure argument %s:%s" % (k,v))
             response = fail("Could not parse submission : missing parts or invalid data?")
 
-    except Exception, e:
+    except Exception as e:
         et, val, tb = sys.exc_info()
         trace = traceback.format_tb(tb)
         error = "Exception : %s %s %s" % (et, val, trace[0])
@@ -178,7 +178,7 @@ def binarychunk_submit(request):
             else:
                 response = fail("Failed to save the binary chunk: %s" 
                                      % message)
-        except Exception, e:
+        except Exception as e:
             et, val, tb = sys.exc_info()
             trace = traceback.format_tb(tb)
             error = "Exception : %s %s %s" % (et, val, trace[0])
@@ -188,7 +188,7 @@ def binarychunk_submit(request):
         logging.info("Finished processing binarychunk form")
     else:
         logging.error("Received invalid binarychunk form")
-        for k,v in request.REQUEST.items():
+        for k,v in list(request.REQUEST.items()):
             if k == 'byte_data':
                 logging.debug("%s:(binary length %d)" % (k,len(v)))
             else:
@@ -240,13 +240,13 @@ def binarychunk_hack_submit(request):
                 response = succeed("Successfully saved the binary chunk: %s" % message)
             else:
                 response = fail("Failed to save the binary chunk: %s" % message)
-        except Exception, e:
+        except Exception as e:
             logging.error("registering binary chunk failed: %s" % e)
             response = fail("Registering binary chunk failed: %s" % e)
         logging.info("Finished processing binarychunk form")
     else:
         logging.error("Received invalid binarychunk form")
-        for k,v in request.REQUEST.items():
+        for k,v in list(request.REQUEST.items()):
             if k == 'byte_data':
                 logging.debug("%s:(binary length %d)" % (k,len(v)))
             else:
@@ -327,7 +327,7 @@ def patient_list(request):
         data = parseAll(list)
         logging.info("we finished getting the patient list")
         response = succeed(data)
-    except Exception, e:
+    except Exception as e:
         et, val, tb = sys.exc_info()
         trace = traceback.format_tb(tb)
         error = "Exception : %s %s %s" % (et, val, trace[0])
@@ -365,7 +365,7 @@ def patient_get(request, id):
         patient = getPatient(url, username, password, id)
         data = parseOne(patient)
         response = succeed(data)
-    except Exception, e:
+    except Exception as e:
         et, val, tb = sys.exc_info()
         trace = traceback.format_tb(tb)
         error = "Exception : %s %s %s" % (et, val, trace[0])
@@ -416,7 +416,7 @@ def parseOne(s):
     doc = minidom.parseString(s)
     doc = doc.childNodes[0]
     if (len(doc.childNodes)==0):
-        print "patient data empty, no such user"
+        print("patient data empty, no such user")
         return ""
     node = doc.childNodes[0]
     gender = node.getAttribute("gender")
@@ -490,7 +490,7 @@ def notification_submit(request):
 
     logging.info("Notification submit received")
 
-    for key,value in request.REQUEST.items():
+    for key,value in list(request.REQUEST.items()):
         logging.info("Notification submit %s:%s" % (key,value))
 
     response = fail('Failed to register notification.')
@@ -504,7 +504,7 @@ def notification_submit(request):
         try:
             delivered = send_notification(n, phoneId)
             response = succeed('Successfully sent notification.')
-        except Exception, e:
+        except Exception as e:
             logging.error("Got error while trying to send notification: %s" % e)
             response = succeed('Failed to send notification. Error')
             
@@ -537,14 +537,14 @@ def email_notification_submit(request):
 
     logging.info("Email notification submit received")
 
-    for key,value in request.REQUEST.items():
+    for key,value in list(request.REQUEST.items()):
         logging.info("Notification submit %s:%s" % (key,value))
 
     response = fail('Failed to register email notification.')
 
     try:
         emailAddresses = ujson.loads(addresses)
-    except Exception, e:
+    except Exception as e:
         response = fail('Got error when trying to parse email addresses.')
 
     if addresses and caseIdentifier and patientId:
@@ -552,7 +552,7 @@ def email_notification_submit(request):
             send_mail(subject, message, settings.OPENMRS_REPLYTO,
                           emailAddresses, fail_silently=False)
             response = succeed('Successfully registered email notification')
-        except Exception, e:
+        except Exception as e:
             logging.error('Email could not be sent: %s' % e)
     return render_json_response(response)
 
@@ -605,7 +605,7 @@ def eventlog_submit(request):
             response = succeed(message)
         else:
             response = fail(message)
-    except Exception, e:
+    except Exception as e:
         logging.error("Error while processing events: %s" % e)
         response = fail("Could not parse eventlog submission.")
     return render_json_response(response)
@@ -660,7 +660,7 @@ def saved_procedure_get(request, id):
         response = succeed([saved_procedure.procedure_guid, 
                             saved_procedure.encounter, 
                             saved_procedure.responses])
-    except Exception, e:
+    except Exception as e:
         logging.error("Got error %s" % e)
         response = fail("couldn't find encounter")
     logging.info("finished returning saved_procedure %s : %s : %s" 
@@ -691,7 +691,7 @@ def saved_procedure_list(request):
         data = parseSavedProcedureAll(saved_procedures)
         logging.info("we finished getting the patient list")
         response = succeed(data)
-    except Exception, e:
+    except Exception as e:
         logging.error("Got exception while fetching patient list: %s" % e)
         response = fail("Problem while getting patient list: %s" % e)
     return render_json_response(response)
@@ -734,7 +734,7 @@ def syc_encounters(request, patient_id, encounters=None):
         response = {}
         responses = ujson.loads(encounter.responses,True)
         
-        for eid, attr in responses.items():
+        for eid, attr in list(responses.items()):
             response[eid] = attr.get('answer')
         answerMap = ujson.dumps(response)
         cleaned_encounters[encounter.encounter] = response

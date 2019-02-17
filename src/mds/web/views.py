@@ -85,9 +85,9 @@ def home(request):
                'code':200,
                'message': version()}))
     else:
-        message = unicode('UNAUTHORIZED:Invalid credentials!')
+        message = str('UNAUTHORIZED:Invalid credentials!')
         logging.warn(message)
-        logging.debug(u'User' + username)
+        logging.debug('User' + username)
         return HttpResponse(ujson.dumps({
                 'status':'FAIL',
                 'code':401, 
@@ -115,9 +115,9 @@ def mobile_authenticate(request,**kwargs):
                     }
                 ]}))
     else:
-        message = unicode('UNAUTHORIZED:Invalid credentials!')
+        message = str('UNAUTHORIZED:Invalid credentials!')
         logging.warn(message)
-        logging.debug(u'User' + username)
+        logging.debug('User' + username)
         return HttpResponse(ujson.dumps({
                 'status':'FAIL',
                 'code':401, 
@@ -132,7 +132,7 @@ class _metadata(object):
         self.mode = self.params.get("mode","normal")
         if self.mode == "verbose":
             self.debug.append("mode: %s" % self.mode)
-            for k,v in request.session.items():
+            for k,v in list(request.session.items()):
                 self.debug.append("%s : %s" %(k,v))
         else:
             self.debug.append("Nothing to see here.")
@@ -174,7 +174,7 @@ def encounter_task(request, **kwargs):
     tmpl = "web/etask.html"
     # Get the request cookies and check for values to preload
     mode = params.get("mode","normal")
-    debug.append(u'mode: %s' % mode)
+    debug.append('mode: %s' % mode)
     # Should use this to track IP's?
     device = params.get('device', None)
     if device:
@@ -218,7 +218,7 @@ def edit_encounter_task(request, uuid, **kwargs):
     tmpl = "web/etask.html"
     # Get the request cookies and check for values to preload
     mode = params.get("mode","normal")
-    debug.append(u'mode: %s' % mode)
+    debug.append('mode: %s' % mode)
     # Should use this to track IP's?
     device = params.get('device', None)
     if device:
@@ -293,18 +293,18 @@ def web_encounter(request, **kwargs):
         form = form_klazz(initial=data)
         if mode == "verbose":
             debug.append("Initial data:")
-            for k,v in data.items():
-                debug.append(u"  %s : %s" % (k,v))
+            for k,v in list(data.items()):
+                debug.append("  %s : %s" % (k,v))
         else:
             debug.append("Nothing to see here")
-            for k,v in data.items():
-                debug.append(u"  %s : %s" % (k,v))
+            for k,v in list(data.items()):
+                debug.append("  %s : %s" % (k,v))
     except:
         form = form_klazz()
-        errors.append(u"Problem with initializing form with data")
-        errors.append(u"%s" % form_klazz)
-        for k,v in data.items():
-            errors.append(u"%s : %s" % (k,v))
+        errors.append("Problem with initializing form with data")
+        errors.append("%s" % form_klazz)
+        for k,v in list(data.items()):
+            errors.append("%s : %s" % (k,v))
 
     return render_to_response("web/encounter_form.html", 
                               context_instance=RequestContext( request, 
@@ -319,10 +319,10 @@ def web_encounter(request, **kwargs):
 
 @login_required(login_url='/mds/login/')
 def task_list(request):
-    query = dict(request.GET.items())
+    query = dict(list(request.GET.items()))
     page = int(query.get('page', 1))
     page_size = int(query.get('page_size', 20))
-    prange =  range(0, 1)
+    prange =  list(range(0, 1))
 
     task_list = EncounterTask.objects.all()
     paginator = Paginator(task_list, page_size)
@@ -335,7 +335,7 @@ def task_list(request):
         tasks = paginator.page(page)
     except (EmptyPage, InvalidPage):
         tasks = paginator.page(paginator.num_pages)
-    prange = range(1,paginator.num_pages + 1)
+    prange = list(range(1,paginator.num_pages + 1))
     return render_to_response("web/etask_list.html", 
                               context_instance=RequestContext( request, 
                                 {
@@ -347,7 +347,7 @@ def task_list(request):
     )
 
 def _list(request,*args,**kwargs):
-    query = dict(request.GET.items())
+    query = dict(list(request.GET.items()))
     start = int(query.pop('start', 1))
     limit = int(query.pop('limit', 20))
     level = int(query.pop('level', 0))
@@ -379,7 +379,7 @@ def _list(request,*args,**kwargs):
             'limit': limit,
             'start': start,
             "rate": int(query.get('refresh', 5)),
-            'range': range(1, paginator.num_pages + 1),
+            'range': list(range(1, paginator.num_pages + 1)),
             "version": settings.API_VERSION }
     return data
 
@@ -393,9 +393,9 @@ def log_list(request):
     return render_to_response('web/log_list.html', RequestContext(request,data))
 
 def log_report(request):
-    post = dict(request.POST.items())
+    post = dict(list(request.POST.items()))
     selected = []
-    for k,v in post.items():
+    for k,v in list(post.items()):
         if v:
             selected.append(k)
     objects = Event.objects.all().filter(uuid__in=selected)
@@ -421,12 +421,12 @@ def log_detail(request, uuid):
     return HttpResponse(ujson.dumps(message))
 
 def log(request,*args,**kwargs):
-    query = dict(request.GET.items())
+    query = dict(list(request.GET.items()))
     page = int(query.get('page', 1))
     page_size = int(query.get('page_size', 20))
     
     data = {'object_list': {},
-            'page_range': range(0, 1),
+            'page_range': list(range(0, 1)),
             'page_size': page_size,
             'page': page,
             "rate": int(query.get('refresh', 5)) }
@@ -500,14 +500,14 @@ class ModelListMixin(SortMixin):
             if isinstance(field, ForeignKey):
                 field_obj = getattr(obj,f)
                 data['is_link'] = True
-                data['url'] = u'/mds/web/{model}/{uuid}/'.format(
+                data['url'] = '/mds/web/{model}/{uuid}/'.format(
                     model=field_obj.__class__.__name__.lower(),
-                    uuid=unicode(field_obj.id))
+                    uuid=str(field_obj.id))
                 data['type'] = 'object'
             elif isinstance(field, FileField):
                 data['is_link'] = True
-                data['url'] = u'/mds/media/{path}'.format(
-                    path=unicode(getattr(obj, f)))
+                data['url'] = '/mds/media/{path}'.format(
+                    path=str(getattr(obj, f)))
                 data['type'] = 'file'
             elif isinstance(field, DateField):
                 data['type'] = 'date'
@@ -516,7 +516,7 @@ class ModelListMixin(SortMixin):
             fields[f] = data
         _obj['fields'] = fields
         _obj['id'] = obj.id
-        _obj['repr'] = unicode(obj)
+        _obj['repr'] = str(obj)
         return _obj
 
     def get_context_data(self, **kwargs):
@@ -524,7 +524,7 @@ class ModelListMixin(SortMixin):
         context['model'] = self.model.__name__.lower()
         #context['form'] = self.form(self.object)
         context['fields'] = self._fields
-        if context.has_key('object'):
+        if 'object' in context:
             context['object_list'] = [context['object'],]
         context['objects'] = list(self.get_object_dict(x) for x in context['object_list'])
         #sort_by, order = self.get_sort_params()
@@ -597,14 +597,14 @@ class ModelFormMixin(object):
                     data['secure'] = True
                 if isinstance(field, ForeignKey):
                     data['is_link'] = True
-                    data['link'] = u'/mds/web/{model}/{uuid}/'.format(
+                    data['link'] = '/mds/web/{model}/{uuid}/'.format(
                         model=field.model,
-                        uuid=unicode(getattr(obj,field.name)
+                        uuid=str(getattr(obj,field.name)
                         ))
                 elif isinstance(field, FileField):
                     data['is_link'] = True
-                    data['link'] = u'/mds/media/{path}'.format(
-                        path=unicode(getattr(obj,field.name)
+                    data['link'] = '/mds/media/{path}'.format(
+                        path=str(getattr(obj,field.name)
                         ))
                 _obj[field.name] = data
                 objs.append(_obj)
@@ -637,21 +637,21 @@ class ModelFormMixin(object):
             }
             if isinstance(_field, ForeignKey):
                 data['is_link'] = True
-                data['url'] = u'/mds/web/{model}/{uuid}/'.format(
+                data['url'] = '/mds/web/{model}/{uuid}/'.format(
                     model= f.lower(), 
-                    uuid=unicode(getattr(obj, f).id))
+                    uuid=str(getattr(obj, f).id))
                 data['type'] = 'ref'
             elif isinstance(_field, FileField):
                 data['is_link'] = True
-                data['url'] = u'/mds/media/{path}'.format(
-                    path=unicode(getattr(obj, f)))
+                data['url'] = '/mds/media/{path}'.format(
+                    path=str(getattr(obj, f)))
                 data['type'] = 'file'
             elif isinstance(_field, DateField):
                 data['type'] = 'date'
             elif isinstance(_field, DateTimeField):
                 data['type'] = 'date'
             elif isinstance(_field, ManyToManyField):
-                associated_objects = map(lambda x:str(x), data['value'].all())
+                associated_objects = [str(x) for x in data['value'].all()]
                 if len(associated_objects) == 0:
                     data['value'] = 'None'
                     data['type'] = 'string'
@@ -662,7 +662,7 @@ class ModelFormMixin(object):
             fields[f] = data
         _obj['fields'] = fields
         _obj['id'] = obj.id
-        _obj['repr'] = unicode(obj)
+        _obj['repr'] = str(obj)
         return _obj
 
     def get_context_data(self, **kwargs):
@@ -671,9 +671,9 @@ class ModelFormMixin(object):
         context['model'] = self.model.__name__.lower()
         #context['form'] = self.form(self.object)
         context['fields'] = self._fields
-        if context.has_key('object'):
+        if 'object' in context:
             context['objects'] = [self.get_object_dict(context['object']),]
-        if context.has_key('object_list'):
+        if 'object_list' in context:
             context['objects'] = list(self.get_object_dict(x) for x in context['object_list'])
         context['portal'] = portal_site
         return context
