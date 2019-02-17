@@ -71,7 +71,7 @@ def fail(data, code=404, errors=[]):
     return HttpResponse(content=ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def serializeModels(models):
-    return list(map(lambda model: model['fields'], serializers.serialize('json', models)))
+    return list(map(lambda model: model['fields'], ujson.loads(serializers.serialize('json', models))))
     
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
