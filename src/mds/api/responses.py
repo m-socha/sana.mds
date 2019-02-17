@@ -4,7 +4,7 @@ Created on Aug 11, 2012
 :author: Sana Development Team
 :version: 2.0
 '''
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 import sys,traceback
 import collections
@@ -55,7 +55,7 @@ class JSONResponse(HttpResponse):
                 message content
     """
     def __init__(self, data, status):
-        HttpResponse.__init__(self, serializers.serialize('json', data), content_type="application/json; charset=utf-8", status=status)
+        HttpResponse.__init__(self, data, content_type="application/json; charset=utf-8", status=status)
         self['X-JSON'] = data
 
 def fail(data, code=404, errors=[]):
@@ -64,7 +64,7 @@ def fail(data, code=404, errors=[]):
                 'code' : code,
                 'message': data,
                 'errors': errors, }
-    return JSONResponse(response, status=code)
+    return JsonResponse(serializers.serialize('json', response), status=code)
 
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
@@ -82,7 +82,7 @@ def succeed(data, code=200):
     response = {'status': 'SUCCESS',
                 'code' : code,
                 'message': data, }
-    return JSONResponse(response, status=code)
+    return JsonResponse(serializers.serialize('json', response), status=code)
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
@@ -90,7 +90,7 @@ def error(exception):
                 'code' : 500,
                 'message': None,
                 'errors': errors, }
-    return JSONResponse(response, status=500)
+    return JsonResponse(serializers.serialize('json', response), status=500)
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
