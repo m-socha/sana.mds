@@ -86,10 +86,10 @@ def succeed(data, code=200):
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
     response = {'status': 'FAILURE',
-                'code' : code,
+                'code' : 500,
                 'message': None,
                 'errors': errors, }
-    return JSONResponse(response, status=code)
+    return JSONResponse(response, status=500)
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
