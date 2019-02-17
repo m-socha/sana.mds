@@ -87,8 +87,8 @@ def succeed(data, code=200):
         data = serializers.serialize('json', data)
         data = ujson.loads(data)
     elif isinstance(data, Model):
-        data = serializers.serialize('json', data)
-        data = ujson.loads(data)
+        data = serializers.serialize('json', [data])
+        data = ujson.loads(data)[0]
     response = {'status': 'SUCCESS',
                'code' : code,
               'message': ujson.loads(data), }
