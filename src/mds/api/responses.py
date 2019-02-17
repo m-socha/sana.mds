@@ -5,7 +5,7 @@ Created on Aug 11, 2012
 :version: 2.0
 '''
 from django.http import JsonResponse, HttpResponse
-from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.query import QuerySet
 import json
 import sys,traceback
@@ -85,7 +85,7 @@ def succeed(data, code=200):
     response = {'status': 'SUCCESS',
                'code' : code,
                'message': list(data.values()) if isinstance(data, QuerySet) else data, }
-    http_response = HttpResponse(json.dumps(response), status=code, content_type='application/json')
+    http_response = HttpResponse(json.dumps(response, cls=DjangoJSONEncoder), status=code, content_type='application/json')
     return http_response
 
 def error(exception):
