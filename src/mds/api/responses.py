@@ -81,11 +81,12 @@ def succeed(data, code=200):
     except:
         msg.append(data)
     '''
-    #msg = data if isinstance(data,collections.Iterable) else data
-   # response = {'status': 'SUCCESS',
-    #           'code' : code,
-     #          'message': list(data.values()) if isinstance(data, QuerySet) else data, }
-    return JsonResponse(data={'test':'test'})
+    msg = data if isinstance(data,collections.Iterable) else data
+    response = {'status': 'SUCCESS',
+               'code' : code,
+              'message': map(lambda val: val, list(data.values()))if isinstance(data, QuerySet) else data, }
+       
+    return HttpResponse(content=json.dumps(data), status=500, content_type="application/json; charset=utf-8")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
