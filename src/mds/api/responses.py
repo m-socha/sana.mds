@@ -6,6 +6,7 @@ Created on Aug 11, 2012
 '''
 from django.http import JsonResponse, HttpResponse
 from django.core import serializers
+from django.db.models import Model
 from django.db.models.query import QuerySet
 import json
 import sys,traceback
@@ -84,6 +85,10 @@ def succeed(data, code=200):
     #msg = data if isinstance(data,collections.Iterable) else data
     if isinstance(data, QuerySet):
         data = serializers.serialize('json', data)
+        data = ujson.loads(data)
+    elif isinstance(data, Model):
+        data = serializers.serialize('json', data)
+        data = ujson.loads(data)
     response = {'status': 'SUCCESS',
                'code' : code,
               'message': ujson.loads(data), }
