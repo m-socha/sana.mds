@@ -64,7 +64,7 @@ def fail(data, code=404, errors=[]):
                 'code' : code,
                 'message': data,
                 'errors': errors, }
-    return HttpResponse(serializers.serialize('json', response), content_type="application/json; charset=utf-8", status=code)
+    return JsonResponse(response, status=code)
 
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
@@ -81,8 +81,8 @@ def succeed(data, code=200):
     #msg = data if isinstance(data,collections.Iterable) else data
     response = {'status': 'SUCCESS',
                 'code' : code,
-                'message': data, }
-    return HttpResponse(serializers.serialize('json', response), content_type="application/json; charset=utf-8", status=code)
+                'message': data if isinstance(data, str) else serializers.serialize('json', response), }
+    return JsonResponse(response, status=code)
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
@@ -90,7 +90,7 @@ def error(exception):
                 'code' : 500,
                 'message': None,
                 'errors': errors, }
-    return HttpResponse(serializers.serialize('json', response), content_type="application/json; charset=utf-8", status=500)
+    return JsonResponse(response, status=500)
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
