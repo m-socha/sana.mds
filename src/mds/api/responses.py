@@ -82,11 +82,10 @@ def succeed(data, code=200):
         msg.append(data)
     '''
     #msg = data if isinstance(data,collections.Iterable) else data
-    response = {'status': 'SUCCESS',
-               'code' : code,
-               'message': list(data.values()) if isinstance(data, QuerySet) else data, }
-    http_response = HttpResponse(json.dumps(response, cls=DjangoJSONEncoder), status=code, content_type='application/json')
-    return http_response
+   # response = {'status': 'SUCCESS',
+    #           'code' : code,
+     #          'message': list(data.values()) if isinstance(data, QuerySet) else data, }
+    return JsonResponse(data, status=code, content_type='application/json')
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
