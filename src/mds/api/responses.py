@@ -5,7 +5,7 @@ Created on Aug 11, 2012
 :version: 2.0
 '''
 from django.http import JsonResponse, HttpResponse
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
 from django.db.models.query import QuerySet
 import json
 import sys,traceback
