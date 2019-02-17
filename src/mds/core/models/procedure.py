@@ -13,6 +13,7 @@ class Procedure(models.Model):
 
     class Meta:
         app_label = "core"
+        unique_together = ('title', 'version')
     uuid = models.SlugField(max_length=36, unique=True, default=make_uuid, editable=False)
     """ A universally unique identifier """
     
@@ -31,8 +32,8 @@ class Procedure(models.Model):
     description = models.TextField()
     """ Additional narrative information about the procedure. """
     
-    version = models.CharField(max_length=255, default="1.0")
-    """ The version string for this instance """
+    version = models.IntegerField(default=1)
+    """ The version for this instance """
     
     src = models.FileField(upload_to='core/procedure', blank=True)
     """ File storage location for the procedure """

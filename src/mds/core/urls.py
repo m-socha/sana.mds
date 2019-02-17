@@ -81,6 +81,7 @@ extra_patterns = patterns(
     # procedure groups
     url(r'^proceduregroup/$', rsrc_procedure_group, name='proceduregroup-list'),
     url(r'^proceduregroup/(?P<uuid>[^/]+)/$', rsrc_procedure_group, name='proceduregroup'),
+    url(r'^proceduregroup/(?P<uuid>[^/]+)/sync/$', rsrc_procedure_group, name='proceduregroup-sync', kwargs={'op':'sync'}),
     
     # subjects
     url(r'^subject/$', rsrc_subject, name='subject-list'),

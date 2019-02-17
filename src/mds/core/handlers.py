@@ -10,6 +10,8 @@ import cjson
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
+from django.db.models import Max, Q
 
 from piston.handler import BaseHandler
 from piston.resource import Resource
@@ -227,6 +229,37 @@ class ProcedureHandler(DispatchingHandler):
         "voided",
     )
     signals = { LOGGER:( EventSignal(), EventSignalHandler(Event))}
+    
+    def create(self,request, uuid=None, *args, **kwargs):
+        if 'json' in request.META.get('CONTENT_TYPE', ''):
+            payload = cjson.decode(request.read())
+            # for now only support version, author, title, description
+            valid_object = False
+            supported_attributes = (
+                'title',
+                'author',
+                'description',
+                'source_file_content',
+                'version'
+            )
+            instance = Procedure()
+            for attr in supported_attributes:
+                value = payload.get(attr, None)
+                if value and attr != 'source_file_content':
+                    setattr(instance, attr, value)
+                    if attr == 'title':
+                        valid_object = True
+                elif value and attr == 'source_file_content':
+                    instance.src.save(instance.title, ContentFile(value))
+            
+            if valid_object:
+                instance.save()
+                return succeed({'uuid':instance.uuid})
+            else:
+                return fail('Missing mandatory title attribute for procedure', 400)
+            
+        else:
+            return super(ProcedureHandler, self).create(request, uuid, *args, **kwargs)
 
     def _read_by_uuid(self,request,uuid):
         """ Returns the procedure file instead of the verbose representation on 
@@ -251,7 +284,38 @@ class ProcedureGroupHandler(DispatchingHandler):
         "created",
         "voided",
     )
-    def read(self, request, uuid=None):
+    def sync(self, request, uuid):
+        proceduregroup = ProcedureGroup.objects.filter(uuid=uuid)
+        if not proceduregroup:
+            return fail('Procedure group not found', 404)
+        else:
+            proceduregroup = proceduregroup[0]
+        if 'json' not in request.META.get('CONTENT_TYPE', ''):
+            return fail('Unexpected content type', 400)
+        server_procedures = proceduregroup.procedures.all()
+        request_payload = cjson.decode(request.read())
+        server_procedures = server_procedures.filter(voided=False).values('title').annotate(max_version=Max('version'))
+        procedure_titles = map(lambda procedure: procedure['title'], server_procedures)
+        # Get procedures with a newer version
+        procedures_to_update_clause = Q()
+        request_procedures = request_payload.get('procedures', {})
+        for server_procedure in server_procedures:
+            request_procedure_version = request_procedures.get(server_procedure['title'], None)
+            # If there is a version mismatch between the most recent non-voided procedure version on the server and client, return the most updated version to the client
+            if not request_procedure_version or request_procedure_version != server_procedure['max_version']:
+                where_clause = (Q(title=server_procedure['title']) & Q(version=server_procedure['max_version']))
+                procedures_to_update_clause = procedures_to_update_clause | where_clause
+        procedures_to_update = Procedure.objects.filter(procedures_to_update_clause) if len(procedures_to_update_clause) != 0 else []
+        updated_procedures = map( \
+            lambda procedure:{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read()}, \
+            procedures_to_update \
+        )
+        # Find procedures that don't exist in the group
+        unknown_request_procedures = filter(lambda request_procedure_title: request_procedure_title not in procedure_titles, request_procedures.keys())
+        return_payload = {'updated_procedures': updated_procedures, 'unknown_procedures': unknown_request_procedures}
+        return succeed(return_payload)
+        
+    def read(self, request, uuid=None, **kwargs):
         result_set = ProcedureGroup.objects.all()
         if uuid:
             result_set = result_set.filter(uuid=uuid)
@@ -266,6 +330,14 @@ class ProcedureGroupHandler(DispatchingHandler):
         elif uuid:
             result_set = result_set[0]
         return succeed(result_set)
+    def create(self,request, uuid=None, *args, **kwargs):
+        if 'sync' == kwargs.get('op', None):
+            if uuid:
+                return self.sync(request, uuid)
+            else:
+                return fail('Not Found', 404)
+        else:
+            super(ProcedureGroupHandler, self).create(request, uuid, args, kwargs)
     signals = { LOGGER:( EventSignal(), EventSignalHandler(Event))}
 
         

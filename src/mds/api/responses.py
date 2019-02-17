@@ -53,8 +53,8 @@ class JSONResponse(HttpResponse):
             data
                 message content
     """
-    def __init__(self, data):
-        HttpResponse.__init__(self, data, mimetype="application/json; charset=utf-8")
+    def __init__(self, data, status):
+        HttpResponse.__init__(self, data, mimetype="application/json; charset=utf-8", status=status)
         self['X-JSON'] = data
 
 def fail(data, code=404, errors=[]):
@@ -63,7 +63,7 @@ def fail(data, code=404, errors=[]):
                 'code' : code,
                 'message': data,
                 'errors': errors, }
-    return response
+    return JSONResponse(response, status=code)
 
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
@@ -81,7 +81,7 @@ def succeed(data, code=200):
     response = {'status': 'SUCCESS',
                 'code' : code,
                 'message': data, }
-    return response
+    return JSONResponse(response, status=code)
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
@@ -89,7 +89,7 @@ def error(exception):
                 'code' : code,
                 'message': None,
                 'errors': errors, }
-    return response
+    return JSONResponse(response, status=code)
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
