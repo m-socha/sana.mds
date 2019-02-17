@@ -54,7 +54,7 @@ class JSONResponse(HttpResponse):
                 message content
     """
     def __init__(self, data, status):
-        HttpResponse.__init__(self, data, mimetype="application/json; charset=utf-8", status=status)
+        HttpResponse.__init__(self, data, content_type="application/json; charset=utf-8", status=status)
         self['X-JSON'] = data
 
 def fail(data, code=404, errors=[]):
