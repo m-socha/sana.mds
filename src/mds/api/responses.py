@@ -86,9 +86,9 @@ def succeed(data, code=200):
         data = serializers.serialize('json', data)
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': data, }
+              'message': ujson.loads(data), }
        
-    return HttpResponse(content=json.dumps(data), status=500, content_type="application/json; charset=utf-8")
+    return HttpResponse(content=json.dumps(response), status=500, content_type="application/json; charset=utf-8")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
