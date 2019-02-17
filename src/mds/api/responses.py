@@ -71,8 +71,12 @@ def fail(data, code=404, errors=[]):
     return HttpResponse(content=ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def serializeModels(models):
-    return list(map(lambda model: model['fields'], ujson.loads(serializers.serialize('json', models))))
-    
+    data = serializers.serialize('json', models)
+    data = ujson.loads(data)
+    to_return = []
+    for el in data:
+        to_return.append(el['fields'])
+    return to_return
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
     '''
@@ -92,9 +96,9 @@ def succeed(data, code=200):
         data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': ujson.loads(ujson.dumps(data)), }
+              'message': data, }
        
-    return HttpResponse(content=json.dumps(response), status=code, content_type="application/json; charset=utf-8")
+    return HttpResponse(content=json.dumps(response), status=500, content_type="application/json; charset=utf-8")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
