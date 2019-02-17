@@ -81,7 +81,7 @@ def succeed(data, code=200):
     #msg = data if isinstance(data,collections.Iterable) else data
     response = {'status': 'SUCCESS',
                 'code' : code,
-                'message': data if isinstance(data, str) else serializers.serialize('json', response), }
+                'message': data if isinstance(data, str) else serializers.serialize('json', data), }
     return JsonResponse(response, status=code)
 
 def error(exception):
