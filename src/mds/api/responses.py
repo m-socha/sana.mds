@@ -70,6 +70,8 @@ def fail(data, code=404, errors=[]):
                 'errors': errors, }
     return HttpResponse(content=ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
+def serializeModels(models):
+    return map(lambda model: model['fields'], serializers.serialize('json', models))
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
     '''
@@ -84,11 +86,9 @@ def succeed(data, code=200):
     '''
     #msg = data if isinstance(data,collections.Iterable) else data
     if isinstance(data, QuerySet):
-        data = serializers.serialize('json', data)
-        data = ujson.loads(data)
+        data = serializeModels(data)
     elif isinstance(data, Model):
-        data = serializers.serialize('json', [data])
-        data = ujson.loads(data)[0]
+        data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
                'code' : code,
               'message': data, }
