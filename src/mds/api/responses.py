@@ -83,10 +83,7 @@ def succeed(data, code=200):
     '''
     #msg = data if isinstance(data,collections.Iterable) else data
     if isinstance(data, QuerySet):
-        old_data = list(data.values())
-        data = []
-        for data_value in old_data:
-            data.append(data_value)
+        data = serializers.serialize('json', data)
     response = {'status': 'SUCCESS',
                'code' : code,
               'message': data, }
