@@ -1,6 +1,6 @@
 ujson
 django==1.8
-django-piston3==0.3rc0
+django-piston3==0.3rc2
 lxml
 django-extensions
 django-extra-views
