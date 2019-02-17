@@ -81,10 +81,15 @@ def succeed(data, code=200):
     except:
         msg.append(data)
     '''
-    msg = data if isinstance(data,collections.Iterable) else data
+    #msg = data if isinstance(data,collections.Iterable) else data
+    if isinstance(data, QuerySet):
+        old_data = list(data.values())
+        data = []
+        for data_value in old_data:
+            data.append(data_value)
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': map(lambda val: val, list(data.values()))if isinstance(data, QuerySet) else data, }
+              'message': data, }
        
     return HttpResponse(content=json.dumps(data), status=500, content_type="application/json; charset=utf-8")
 
