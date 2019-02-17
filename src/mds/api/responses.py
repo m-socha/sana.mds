@@ -85,7 +85,7 @@ def succeed(data, code=200):
    # response = {'status': 'SUCCESS',
     #           'code' : code,
      #          'message': list(data.values()) if isinstance(data, QuerySet) else data, }
-    return JsonResponse({'test':'test'})
+    return JsonResponse(data={'test':'test'})
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
