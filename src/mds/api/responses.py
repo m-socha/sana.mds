@@ -92,7 +92,7 @@ def succeed(data, code=200):
         data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': data, }
+              'message': ujson.loads(ujson.dumps(data)), }
        
     return HttpResponse(content=json.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
