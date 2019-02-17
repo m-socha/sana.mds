@@ -83,7 +83,7 @@ def succeed(data, code=200):
     response = {'status': 'SUCCESS',
                'code' : code,
                'message': data, }
-    return HttpResponse(content=ujson.dumps(response), content_type="application/json", status=code)
+    return HttpResponse(content=ujson.dumps(response), status=code)
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
