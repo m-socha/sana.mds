@@ -95,8 +95,7 @@ def succeed(data, code=200):
     #elif isinstance(data, Model):
     #    data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
-               'code' : code,
-              'message': data, }
+               'code' : code }
        
     return response
 
