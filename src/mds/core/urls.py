@@ -79,7 +79,7 @@ extra_patterns = patterns(
     url(r'^procedure/(?P<uuid>[^/]+)/$', rsrc_procedure, name='procedure'),
     
     # procedure groups
-    url(r'^proceduregroup/$', rsrc_procedure_group, name='proceduregroup-list'),
+    url(r'^proceduregroup/$', rsrc_procedure_group, name='proceduregroup-list', kwargs = { 'emitter_format': 'json' }),
     url(r'^proceduregroup/(?P<uuid>[^/]+)/$', rsrc_procedure_group, name='proceduregroup'),
     url(r'^proceduregroup/(?P<uuid>[^/]+)/sync/$', rsrc_procedure_group, name='proceduregroup-sync', kwargs={'op':'sync'}),
     
