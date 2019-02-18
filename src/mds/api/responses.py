@@ -72,7 +72,7 @@ def fail(data, code=404, errors=[]):
 
 def serializeModels(models):
     data = serializers.serialize('json', models)
-    data = json.loads(data)
+    data = ujson.loads(data)
     to_return = []
     for el in data:
         to_return.append(el['fields'])
@@ -96,9 +96,9 @@ def succeed(data, code=200):
         data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': '{}', }
+              'message': data, }
        
-    return HttpResponse(content=json.dumps(data), status=code, content_type="application/json")
+    return HttpResponse(content=json.dumps(response).decode('utf-8'), status=code, content_type="application/json")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
