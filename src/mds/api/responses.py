@@ -90,12 +90,13 @@ def succeed(data, code=200):
         msg.append(data)
     '''
     #msg = data if isinstance(data,collections.Iterable) else data
-   # if isinstance(data, QuerySet):
-    #    data = serializeModels(data)
-    #elif isinstance(data, Model):
-    #    data = serializeModels([data])[0]
+    if isinstance(data, QuerySet):
+        data = serializeModels(data)
+    elif isinstance(data, Model):
+        data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
-               'code' : ['asd','a'] }
+                'code' : code,
+                'message': data}
        
     return response
 

@@ -75,13 +75,13 @@ extra_patterns = patterns(
     url(r'^observer/(?P<uuid>[^/]+)/$', rsrc_observer, name='observer'),
     
     # procedures
-    url(r'^procedure/$', rsrc_procedure, name='procedure-list'),
-    url(r'^procedure/(?P<uuid>[^/]+)/$', rsrc_procedure, name='procedure'),
+    url(r'^procedure/$', rsrc_procedure, name='procedure-list',  kwargs = { 'emitter_format': 'json' }),
+    url(r'^procedure/(?P<uuid>[^/]+)/$', rsrc_procedure, name='procedure',  kwargs = { 'emitter_format': 'json' }),
     
     # procedure groups
     url(r'^proceduregroup/$', rsrc_procedure_group, name='proceduregroup-list', kwargs = { 'emitter_format': 'json' }),
-    url(r'^proceduregroup/(?P<uuid>[^/]+)/$', rsrc_procedure_group, name='proceduregroup'),
-    url(r'^proceduregroup/(?P<uuid>[^/]+)/sync/$', rsrc_procedure_group, name='proceduregroup-sync', kwargs={'op':'sync'}),
+    url(r'^proceduregroup/(?P<uuid>[^/]+)/$', rsrc_procedure_group, name='proceduregroup',  kwargs = { 'emitter_format': 'json' }),
+    url(r'^proceduregroup/(?P<uuid>[^/]+)/sync/$', rsrc_procedure_group, name='proceduregroup-sync', kwargs={'op':'sync', 'emitter_format': 'json'}),
     
     # subjects
     url(r'^subject/$', rsrc_subject, name='subject-list'),
