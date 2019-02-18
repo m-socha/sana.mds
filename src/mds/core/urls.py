@@ -75,8 +75,8 @@ extra_patterns = patterns(
     url(r'^observer/(?P<uuid>[^/]+)/$', rsrc_observer, name='observer'),
     
     # procedures
-    url(r'^procedure/$', rsrc_procedure, name='procedure-list'),
-    url(r'^procedure/(?P<uuid>[^/]+)/$', rsrc_procedure, name='procedure'),
+    url(r'^procedure/$', rsrc_procedure, name='procedure-list', kwargs={ 'emitter_format': 'json' }),
+    url(r'^procedure/(?P<uuid>[^/]+)/$', rsrc_procedure, name='procedure', kwargs={ 'emitter_format': 'json' }),
     
     # subjects
     url(r'^subject/$', rsrc_subject, name='subject-list'),
