@@ -162,7 +162,7 @@ def registration(request, **kwargs):
                               'messages' : metadata.messages
                                }))
 
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def encounter_task(request, **kwargs):
     flavor = kwargs.get('flavor',None) if kwargs else None
     params = request.COOKIES
@@ -201,7 +201,7 @@ def encounter_task(request, **kwargs):
                                 })
                              )
 
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def edit_encounter_task(request, uuid, **kwargs):
     if(uuid):
         try:
@@ -237,7 +237,7 @@ def edit_encounter_task(request, uuid, **kwargs):
                                  'debug' : debug
                                 })
                              )
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def web_encounter(request, **kwargs):
     _cookies = request.COOKIES
     params = request.COOKIES
@@ -316,7 +316,7 @@ def web_encounter(request, **kwargs):
                                 })
                              )
 
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def task_list(request):
     query = dict(request.GET.items())
     page = int(query.get('page', 1))
@@ -498,13 +498,13 @@ class ModelListMixin(SortMixin):
             if isinstance(field, ForeignKey):
                 field_obj = getattr(obj,f)
                 data['is_link'] = True
-                data['url'] = u'/mds/web/{model}/{uuid}/'.format(
+                data['url'] = u'/web/{model}/{uuid}/'.format(
                     model=field_obj.__class__.__name__.lower(),
                     uuid=unicode(field_obj.id))
                 data['type'] = 'object'
             elif isinstance(field, FileField):
                 data['is_link'] = True
-                data['url'] = u'/mds/media/{path}'.format(
+                data['url'] = u'/media/{path}'.format(
                     path=unicode(getattr(obj, f)))
                 data['type'] = 'file'
             elif isinstance(field, DateField):
@@ -551,8 +551,7 @@ class ModelFormMixin(object):
     exclude = ()
     fields = '__all__'
     _fields = []
-    success_url_format = "/{app}/{model}/%(id)s/"
-    app = 'mds.web'
+    success_url_format = "/web/{model}/%(id)s/"
     
     def __init__(self, *args, **kwargs):
         super(ModelFormMixin,self)
@@ -564,9 +563,8 @@ class ModelFormMixin(object):
         if not hasattr(self,'exclude'):
             self.exclude = ()
         _model = getattr(self,"model").__name__.lower()
-        _app = getattr(self,'app').replace(".","/")
         setattr(self,'success_url', 
-                self.success_url_format.format(app=_app,model=_model))
+                self.success_url_format.format(model=_model))
 
     def field_names(self):
         if not getattr(self,'fields',None):
@@ -594,13 +592,13 @@ class ModelFormMixin(object):
                     data['secure'] = True
                 if isinstance(field, ForeignKey):
                     data['is_link'] = True
-                    data['link'] = u'/mds/web/{model}/{uuid}/'.format(
+                    data['link'] = u'/web/{model}/{uuid}/'.format(
                         model=field.model,
                         uuid=unicode(getattr(obj,field.name)
                         ))
                 elif isinstance(field, FileField):
                     data['is_link'] = True
-                    data['link'] = u'/mds/media/{path}'.format(
+                    data['link'] = u'/media/{path}'.format(
                         path=unicode(getattr(obj,field.name)
                         ))
                 _obj[field.name] = data
@@ -633,13 +631,13 @@ class ModelFormMixin(object):
             }
             if isinstance(_field, ForeignKey):
                 data['is_link'] = True
-                data['url'] = u'/mds/web/{model}/{uuid}/'.format(
+                data['url'] = u'/web/{model}/{uuid}/'.format(
                     model= f.lower(), 
                     uuid=unicode(getattr(obj, f).id))
                 data['type'] = 'ref'
             elif isinstance(_field, FileField):
                 data['is_link'] = True
-                data['url'] = u'/mds/media/{path}'.format(
+                data['url'] = u'/media/{path}'.format(
                     path=unicode(getattr(obj, f)))
                 data['type'] = 'file'
             elif isinstance(_field, DateField):
@@ -930,7 +928,7 @@ class EncounterTaskDetailView(ModelFormMixin,DetailView):
 #     template_name = "web/@_list.html"
 
 
-@login_required(login_url="/mds/web/login/")
+@login_required(login_url="/web/login/")
 def portal(request):
     from mds.core import models as objects
     metadata = _metadata(request)

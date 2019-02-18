@@ -5,8 +5,13 @@ Created on Aug 11, 2012
 :version: 2.0
 '''
 from django.http import HttpResponse
+from django.core import serializers
+from django.db.models import Model
+from django.db.models.query import QuerySet
 import sys,traceback
 import collections
+import ujson
+import json
 
 def render_json_response(data):
     return JSONResponse(data)
@@ -56,14 +61,22 @@ class JSONResponse(HttpResponse):
     def __init__(self, data):
         HttpResponse.__init__(self, data, mimetype="application/json; charset=utf-8")
         self['X-JSON'] = data
-
+        
+def serializeModels(models):
+    data = serializers.serialize('json', models)
+    data = ujson.loads(data)
+    to_return = []
+    for el in data:
+        to_return.append(el['fields'])
+    return to_return
+    
 def fail(data, code=404, errors=[]):
     ''' Fail response as a python dict with data '''
     response = {'status': 'FAILURE',
                 'code' : code,
                 'message': data,
                 'errors': errors, }
-    return response
+    return HttpResponse(content=ujson.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def succeed(data, code=200):
     ''' Success response as a python dict with data '''
@@ -78,10 +91,14 @@ def succeed(data, code=200):
         msg.append(data)
     '''
     #msg = data if isinstance(data,collections.Iterable) else data
+    if isinstance(data, QuerySet):
+        data = serializeModels(data)
+    elif isinstance(data, Model):
+        data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
                 'code' : code,
                 'message': data, }
-    return response
+    return HttpResponse(content=json.dumps(response), status=code, content_type="application/json; charset=utf-8")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
@@ -89,7 +106,7 @@ def error(exception):
                 'code' : code,
                 'message': None,
                 'errors': errors, }
-    return response
+    return HttpResponse(content=ujson.dumps(response), status=500, content_type="application/json; charset=utf-8")
 
 def unauthorized(message):
     return fail(message, Codes.UNAUTHORIZED)
