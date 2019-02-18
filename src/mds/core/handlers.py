@@ -6,6 +6,7 @@ Created on Feb 29, 2012
 '''
 import logging
 import ujson
+import base64
 
 from django.conf import settings
 from django.contrib.auth import authenticate
@@ -306,7 +307,7 @@ class ProcedureGroupHandler(DispatchingHandler):
                 where_clause = (Q(title=server_procedure['title']) & Q(version=server_procedure['max_version']))
                 procedures_to_update_clause = procedures_to_update_clause | where_clause
         procedures_to_update = Procedure.objects.filter(procedures_to_update_clause) if len(procedures_to_update_clause) != 0 else []
-        updated_procedures = [{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read()} for procedure in procedures_to_update]
+        updated_procedures = [{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read().decode('utf-8')} for procedure in procedures_to_update]
         # Find procedures that don't exist in the group
         unknown_request_procedures = [request_procedure_title for request_procedure_title in list(request_procedures.keys()) if request_procedure_title not in procedure_titles]
         return_payload = {'updated_procedures': updated_procedures, 'unknown_procedures': unknown_request_procedures}
