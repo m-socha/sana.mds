@@ -307,7 +307,7 @@ class ProcedureGroupHandler(DispatchingHandler):
                 procedures_to_update_clause = procedures_to_update_clause | where_clause
         procedures_to_update = Procedure.objects.filter(procedures_to_update_clause) if len(procedures_to_update_clause) != 0 else []
         updated_procedures = map( \
-            lambda procedure:{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read()}, \
+            lambda procedure:{'title': procedure.title, 'author': procedure.author, 'description': procedure.description, 'version': procedure.version, 'source_file_content': procedure.src.read().decode('utf-8')}, \
             procedures_to_update \
         )
         # Find procedures that don't exist in the group
