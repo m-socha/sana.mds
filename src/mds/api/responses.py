@@ -72,7 +72,7 @@ def fail(data, code=404, errors=[]):
 
 def serializeModels(models):
     data = serializers.serialize('json', models)
-    data = json.load(data)
+    data = json.loads(data)
     to_return = []
     for el in data:
         to_return.append(el['fields'])
