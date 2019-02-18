@@ -98,7 +98,7 @@ def succeed(data, code=200):
                'code' : code,
               'message': data, }
        
-    return json.dumps(response)
+    return response
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
