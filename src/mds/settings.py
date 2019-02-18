@@ -87,7 +87,7 @@ ADMIN_MEDIA_PREFIX = '/mds/static/'
 trailing slash. Default value "/static/admin/".
 """
 
-MEDIA_ROOT = os.path.join(CACHE_ROOT, 'media')
+MEDIA_ROOT = '/tmp'
 """Absolute path to the directory that holds media. Default value: 
 "/opt/sana/sana.mds/cache/media/"
 """
