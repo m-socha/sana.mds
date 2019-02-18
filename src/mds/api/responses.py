@@ -96,9 +96,9 @@ def succeed(data, code=200):
         data = serializeModels([data])[0]
     response = {'status': 'SUCCESS',
                'code' : code,
-              'message': data, }
+              'message': '{}', }
        
-    return HttpResponse(content=json.dumps(response), status=code, content_type="application/json")
+    return HttpResponse(content=json.dumps(data), status=code, content_type="application/json")
 
 def error(exception):
     errors = traceback.format_exception_only(*sys.exc_info()[:2])
