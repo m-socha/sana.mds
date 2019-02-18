@@ -566,7 +566,6 @@ class ModelFormMixin(object):
         if not hasattr(self,'exclude'):
             self.exclude = ()
         _model = getattr(self,"model").__name__.lower()
-        _app = getattr(self,'app').replace(".","/")
         setattr(self,'success_url', 
                 self.success_url_format.format(model=_model))
 
