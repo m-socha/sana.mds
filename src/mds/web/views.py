@@ -163,7 +163,7 @@ def registration(request, **kwargs):
                               'messages' : metadata.messages
                                }))
 
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def encounter_task(request, **kwargs):
     flavor = kwargs.get('flavor',None) if kwargs else None
     params = request.COOKIES
@@ -238,7 +238,7 @@ def edit_encounter_task(request, uuid, **kwargs):
                                  'debug' : debug
                                 })
                              )
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def web_encounter(request, **kwargs):
     _cookies = request.COOKIES
     params = request.COOKIES
@@ -317,7 +317,7 @@ def web_encounter(request, **kwargs):
                                 })
                              )
 
-@login_required(login_url='/mds/login/')
+@login_required(login_url='/login/')
 def task_list(request):
     query = dict(list(request.GET.items()))
     page = int(query.get('page', 1))
@@ -554,8 +554,7 @@ class ModelFormMixin(object):
     fields = '__all__'
     _fields = []
     fields = '__all__'
-    success_url_format = "/{app}/{model}/%(id)s/"
-    app = 'mds.web'
+    success_url_format = "/web/{model}/%(id)s/"
     
     def __init__(self, *args, **kwargs):
         super(ModelFormMixin,self)
@@ -569,7 +568,7 @@ class ModelFormMixin(object):
         _model = getattr(self,"model").__name__.lower()
         _app = getattr(self,'app').replace(".","/")
         setattr(self,'success_url', 
-                self.success_url_format.format(app=_app,model=_model))
+                self.success_url_format.format(model=_model))
 
     def field_names(self):
         if not getattr(self,'fields',None) or self.fields == '__all__':
@@ -977,7 +976,7 @@ class EncounterTaskDetailView(LoginRequiredMixin, ModelFormMixin,DetailView):
 #     template_name = "web/@_list.html"
 
 
-@login_required(login_url="/mds/web/login/")
+@login_required(login_url="/web/login/")
 def portal(request):
     from mds.core import models as objects
     metadata = _metadata(request)
